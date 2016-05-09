@@ -25,11 +25,11 @@ function M.new(data)
       local tileset = tilesets[i]
       local firstgid = tileset.firstgid
       local lastgid = firstgid + tileset.tilecount 
-      if gid >= firstgid and gid<= lastgid then
+      if gid >= firstgid and gid <= lastgid then
         for j = 1, #tileset.tiles do
           local tile = tileset.tiles[j]
           if tile.id == (gid - firstgid) then
-            return tile.image
+            return tile.image -- may need updating with documents directory
           end
         end
       end
@@ -43,8 +43,8 @@ function M.new(data)
       local objectGroup = display.newGroup()
       for j = 1, #layer.objects do
         local object = layer.objects[j]
-        local gid = gidLookup(object.gid)
-        if gid then 
+        if object.gid then 
+          local gid = gidLookup(object.gid)
           local image = display.newImageRect(gid, object.width, object.height)
           -- name and type
           image.name = object.name
@@ -122,6 +122,8 @@ function M.new(data)
     end
     return objects
   end
+  
+  -- add helpful values to the map itself
   map.designedWidth, map.designedHeight = width, height
   return map
 end
