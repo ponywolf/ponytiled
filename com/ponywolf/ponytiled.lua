@@ -56,7 +56,6 @@ function M.new(data)
           image.isVisible = object.visible
           -- simple phyics
           if object.properties.bodyType then
-            print (object.properties.bodyType)
             physics.addBody(image, object.properties.bodyType, object.properties)
           end          
           -- apply custom properties

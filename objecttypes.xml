@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="brick" color="#d330b1">
+  <property name="bodyType" type="string" default=""/>
+  <property name="bounce" type="float"/>
+  <property name="density" type="float" default="0"/>
+  <property name="friction" type="float" default="0"/>
+ </objecttype>
+</objecttypes>
