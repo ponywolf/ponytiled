@@ -327,7 +327,7 @@
   <object id="11" gid="53" x="960" y="448" width="128" height="64"/>
   <object id="12" gid="53" x="1024" y="512" width="128" height="64"/>
   <object id="13" gid="53" x="1024" y="576" width="128" height="64"/>
-  <object id="14" name="top" type="top" gid="42" x="832" y="384" width="128" height="64"/>
-  <object id="15" type="top" gid="46" x="960" y="384" width="128" height="64"/>
+  <object id="14" gid="42" x="832" y="384" width="128" height="64"/>
+  <object id="15" gid="46" x="960" y="384" width="128" height="64"/>
  </objectgroup>
 </map>

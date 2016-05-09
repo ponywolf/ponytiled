@@ -761,8 +761,8 @@ return {
         },
         {
           id = 14,
-          name = "top",
-          type = "top",
+          name = "",
+          type = "",
           shape = "rectangle",
           x = 832,
           y = 384,
@@ -776,7 +776,7 @@ return {
         {
           id = 15,
           name = "",
-          type = "top",
+          type = "",
           shape = "rectangle",
           x = 960,
           y = 384,
