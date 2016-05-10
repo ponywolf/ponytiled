@@ -6,6 +6,7 @@ In 130 lines of code, ponytiled loads a sub-set of Tiled layers and tilesets. Bu
 - [x] Loads .LUA exports from www.mapeditor.org
 - [x] Adds basic properties from tiled including physics
 - [x] Supports object layers and collections of images only
+- [x] Supports object x/y flipping and re-centering of anchorX/anchorY for Corona
 
 Watch and in depth video on how to get started...
 
