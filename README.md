@@ -7,5 +7,9 @@ In 130 lines of code, ponytiled loads a sub-set of Tiled layers and tilesets. Bu
 - [x] Adds basic properties from tiled including physics
 - [x] Supports object layers and collections of images only
 
+Watch and in depth video on how to get started...
+
+[![Watch a how-to video on Corona Geek](http://img.youtube.com/vi/DMsiGsgwZts/0.jpg)](http://www.youtube.com/watch?v=DMsiGsgwZts)
+
 ![Screenshot of ponytiled in action]
 (https://raw.githubusercontent.com/ponywolf/ponytiled/master/screenshot.png)
