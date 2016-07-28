@@ -8,7 +8,7 @@ return {
   height = 15,
   tilewidth = 64,
   tileheight = 64,
-  nextobjectid = 38,
+  nextobjectid = 65,
   properties = {},
   tilesets = {
     {
@@ -180,7 +180,31 @@ return {
           id = 25,
           image = "toy-bricks/brickBlue10.png",
           width = 64,
-          height = 64
+          height = 64,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            offsetx = 0,
+            offsety = 0,
+            properties = {},
+            objects = {
+              {
+                id = 5,
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = -4,
+                y = 13,
+                width = 62,
+                height = 30,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
         },
         {
           id = 26,
@@ -300,7 +324,38 @@ return {
           id = 45,
           image = "toy-bricks/brickGreen14.png",
           width = 128,
-          height = 64
+          height = 64,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            offsetx = 0,
+            offsety = 0,
+            properties = {},
+            objects = {
+              {
+                id = 1,
+                name = "",
+                type = "",
+                shape = "polygon",
+                x = 0,
+                y = 10,
+                width = 0,
+                height = 0,
+                rotation = 0,
+                visible = true,
+                polygon = {
+                  { x = 0, y = 0 },
+                  { x = 6, y = 51 },
+                  { x = 128, y = 53 },
+                  { x = 124, y = 27 },
+                  { x = 29, y = -4 }
+                },
+                properties = {}
+              }
+            }
+          }
         },
         {
           id = 46,
@@ -668,7 +723,7 @@ return {
   layers = {
     {
       type = "objectgroup",
-      name = "Object Layer 1",
+      name = "fun",
       visible = true,
       opacity = 1,
       offsetx = 0,
@@ -676,114 +731,58 @@ return {
       properties = {},
       objects = {
         {
-          id = 8,
+          id = 61,
           name = "",
-          type = "",
+          type = "dragable",
           shape = "rectangle",
-          x = 768,
-          y = 576,
+          x = 744,
+          y = 364,
           width = 128,
           height = 64,
           rotation = 0,
-          gid = 53,
+          gid = 2147483675,
           visible = true,
           properties = {}
         },
         {
-          id = 9,
+          id = 62,
           name = "",
-          type = "",
+          type = "dragable",
           shape = "rectangle",
-          x = 768,
-          y = 512,
+          x = 720,
+          y = 530,
           width = 128,
           height = 64,
           rotation = 0,
-          gid = 53,
+          gid = 27,
           visible = true,
           properties = {}
         },
         {
-          id = 10,
+          id = 63,
           name = "",
-          type = "",
+          type = "dragable",
           shape = "rectangle",
-          x = 832,
-          y = 448,
+          x = 1172,
+          y = 296,
           width = 128,
           height = 64,
-          rotation = 0,
-          gid = 53,
+          rotation = 180,
+          gid = 2147483675,
           visible = true,
           properties = {}
         },
         {
-          id = 11,
+          id = 64,
           name = "",
-          type = "",
+          type = "dragable",
           shape = "rectangle",
-          x = 960,
-          y = 448,
+          x = 1060,
+          y = 536,
           width = 128,
           height = 64,
           rotation = 0,
-          gid = 53,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 12,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 1024,
-          y = 512,
-          width = 128,
-          height = 64,
-          rotation = 0,
-          gid = 53,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 13,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 1024,
-          y = 576,
-          width = 128,
-          height = 64,
-          rotation = 0,
-          gid = 53,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 14,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 832,
-          y = 384,
-          width = 128,
-          height = 64,
-          rotation = 0,
-          gid = 42,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 15,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 960,
-          y = 384,
-          width = 128,
-          height = 64,
-          rotation = 0,
-          gid = 46,
+          gid = 3221225499,
           visible = true,
           properties = {}
         }

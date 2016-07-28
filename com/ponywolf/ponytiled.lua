@@ -35,27 +35,28 @@ function M.new(data)
       local firstgid = tileset.firstgid
       local lastgid = firstgid + tileset.tilecount 
       if gid >= firstgid and gid <= lastgid then
-        for j = 1, #tileset.tiles do
+        for k,v in pairs(tileset.tiles) do
           local tile = tileset.tiles[j]
-          if tile.id == (gid - firstgid) then
-            return tile.image -- may need updating with documents directory
+          if (v.id or tonumber(k)) == (gid - firstgid) then
+            return v.image -- may need updating with documents directory
           end
         end
       end
-    end  
+    end
     return false
   end
 
   for i = 1, #layers do
     local layer = layers[i]
+    layer.properties = layer.properties or {} -- make sure we have a properties table
     if layer.type == "objectgroup" then
       local objectGroup = display.newGroup()
       for j = 1, #layer.objects do
         local object = layer.objects[j]
+        object.properties = object.properties or {} -- make sure we have a properties table
         if object.gid then
           -- Flipping merged from code by Sergey Lerg
           local gid = object.gid
-          print (gid)
           local flip = {}
           flip.x = hasbit(gid, FlippedHorizontallyFlag)
           flip.y = hasbit(gid, FlippedVerticallyFlag)          
@@ -64,43 +65,44 @@ function M.new(data)
           gid = clearbit(gid, FlippedVerticallyFlag)
           gid = clearbit(gid, FlippedDiagonallyFlag)
           gid = gidLookup(gid)
-          local image = display.newImageRect(gid, object.width, object.height)
-          -- name and type
-          image.name = object.name
-          image.type = object.type        
-          -- apply base properties
-          image.anchorX, image.anchorY = 0, 1
-          image.x, image.y = object.x, object.y
-          image.rotation = object.rotation
-          image.isVisible = object.visible
-          -- move anchor to center
-          if image.contentBounds then 
-            local bounds = image.contentBounds
-            local actualCenterX, actualCenterY =  (bounds.xMin + bounds.xMax)/2 , (bounds.yMin + bounds.yMax)/2
-            image.anchorX, image.anchorY = 0.5, 0.5  
-            image.x = actualCenterX
-            image.y = actualCenterY 
+          if gid then
+            local image = display.newImageRect(gid, object.width, object.height)
+            -- name and type
+            image.name = object.name
+            image.type = object.type        
+            -- apply base properties
+            image.anchorX, image.anchorY = 0, 1
+            image.x, image.y = object.x, object.y
+            image.rotation = object.rotation
+            image.isVisible = object.visible
+            -- move anchor to center
+            if image.contentBounds then 
+              local bounds = image.contentBounds
+              local actualCenterX, actualCenterY =  (bounds.xMin + bounds.xMax)/2 , (bounds.yMin + bounds.yMax)/2
+              image.anchorX, image.anchorY = 0.5, 0.5  
+              image.x = actualCenterX
+              image.y = actualCenterY 
+            end
+            -- flip it
+            if flip.xy then
+              print("WARNING: Unsupported Tiled rotation x,y in ", object.name)
+            else
+              if flip.x then
+                image.xScale = -1
+              end
+              if flip.y then
+                image.yScale = -1
+              end
+            end          
+            -- simple phyics
+            if object.properties.bodyType then
+              physics.addBody(image, object.properties.bodyType, object.properties)
+            end          
+            -- apply custom properties
+            image = inherit(image, object.properties)
+            image = inherit(image, layer.properties)
+            objectGroup:insert(image)
           end
-          -- flip it
-          print (flip.x, flip.y)
-          if flip.xy then
-            print("WARNING: Unsupported Tiled rotation x,y in ", object.name)
-          else
-            if flip.x then
-              image.xScale = -1
-            end
-            if flip.y then
-              image.yScale = -1
-            end
-          end          
-          -- simple phyics
-          if object.properties.bodyType then
-            physics.addBody(image, object.properties.bodyType, object.properties)
-          end          
-          -- apply custom properties
-          image = inherit(image, object.properties)
-          image = inherit(image, layer.properties)
-          objectGroup:insert(image)
         end
       end
       objectGroup.name = layer.name
@@ -112,7 +114,7 @@ function M.new(data)
 
   function map:extend(...)
     local plugins = arg or {}
-    -- each custom object above has its own game.scene module
+    -- each custom object above has its own ponywolf.plugin module
     for t = 1, #plugins do 
       -- load each module based on type
       local plugin = require ("com.ponywolf.plugins." .. plugins[t])
