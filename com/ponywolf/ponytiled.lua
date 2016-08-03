@@ -8,7 +8,6 @@ local physics = require "physics"
 local FlippedHorizontallyFlag   = 0x80000000
 local FlippedVerticallyFlag     = 0x40000000
 local FlippedDiagonallyFlag     = 0x20000000
-local ClearFlag                 = 0x1FFFFFFF
 
 local function hasbit(x, p) return x % (p + p) >= p end
 local function setbit(x, p) return hasbit(x, p) and x or x + p end
