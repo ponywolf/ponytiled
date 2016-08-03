@@ -26,8 +26,8 @@
                  "type":"dragable",
                  "visible":true,
                  "width":128,
-                 "x":720,
-                 "y":530
+                 "x":704,
+                 "y":512
                 }, 
                 {
                  "gid":2147483675,
@@ -76,6 +76,29 @@
                  "width":32,
                  "x":604,
                  "y":398
+                }, 
+                {
+                 "height":64,
+                 "id":69,
+                 "name":"rectangle",
+                 "properties":
+                    {
+                     "fillColor":"#ffe52b7a",
+                     "strokeColor":"#ffacf21d",
+                     "strokeWidth":4
+                    },
+                 "propertytypes":
+                    {
+                     "fillColor":"color",
+                     "strokeColor":"color",
+                     "strokeWidth":"int"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":893,
+                 "y":549
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -84,7 +107,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":69,
+ "nextobjectid":70,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tileheight":64,

@@ -21,6 +21,26 @@ local function inherit(image, properties)
   return image
 end
 
+local function centerAnchor(image)
+  if image.contentBounds then 
+    local bounds = image.contentBounds
+    local actualCenterX, actualCenterY =  (bounds.xMin + bounds.xMax)/2 , (bounds.yMin + bounds.yMax)/2
+    image.anchorX, image.anchorY = 0.5, 0.5  
+    image.x = actualCenterX
+    image.y = actualCenterY 
+  end
+end
+
+local function decodeTiledColor(hex)
+  hex = hex or "#FF888888"
+  hex = hex:gsub("#","")
+  local function hexToFloat(part)
+    return tonumber("0x".. part or "00") / 255
+  end
+  local a, r, g, b =  hexToFloat(hex:sub(1,2)), hexToFloat(hex:sub(3,4)), hexToFloat(hex:sub(5,6)) , hexToFloat(hex:sub(7,8)) 
+  return r,g,b,a
+end
+
 function M.new(data)
   local map = display.newGroup()  
 
@@ -75,14 +95,7 @@ function M.new(data)
             image.x, image.y = object.x, object.y
             image.rotation = object.rotation
             image.isVisible = object.visible
-            -- move anchor to center
-            if image.contentBounds then 
-              local bounds = image.contentBounds
-              local actualCenterX, actualCenterY =  (bounds.xMin + bounds.xMax)/2 , (bounds.yMin + bounds.yMax)/2
-              image.anchorX, image.anchorY = 0.5, 0.5  
-              image.x = actualCenterX
-              image.y = actualCenterY 
-            end
+            centerAnchor(image)
             -- flip it
             if flip.xy then
               print("WARNING: Unsupported Tiled rotation x,y in ", object.name)
@@ -103,6 +116,17 @@ function M.new(data)
             image = inherit(image, layer.properties)
             objectGroup:insert(image)
           end
+        else -- if all else fails make a simple rect
+          local rect = display.newRect(0,0, object.width, object.height)
+          rect.anchorX, rect.anchorY = 0, 0
+          rect.x, rect.y = object.x, object.y
+          centerAnchor(rect)
+          -- apply custom properties
+          rect = inherit(rect, object.properties)
+          rect = inherit(rect, layer.properties)          
+          if rect.fillColor then rect:setFillColor(decodeTiledColor(rect.fillColor)) end
+          if rect.strokeColor then rect:setStrokeColor(decodeTiledColor(rect.strokeColor)) end                
+          objectGroup:insert(rect)
         end
       end
       objectGroup.name = layer.name

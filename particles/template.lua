@@ -1,6 +1,7 @@
 -- Commented Corona Particles
 
 return {
+  
   emitterType = 0,  -- 0 = gravity, 1 = radial
   maxParticles = 64,
   configName = "",

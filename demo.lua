@@ -1,14 +1,14 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "0.16.1",
+  tiledversion = "v0.16.2-80-gdc8a618",
   orientation = "orthogonal",
   renderorder = "right-down",
   width = 30,
   height = 15,
   tilewidth = 64,
   tileheight = 64,
-  nextobjectid = 65,
+  nextobjectid = 70,
   properties = {},
   tilesets = {
     {
@@ -188,6 +188,7 @@ return {
             opacity = 1,
             offsetx = 0,
             offsety = 0,
+            draworder = "index",
             properties = {},
             objects = {
               {
@@ -332,6 +333,7 @@ return {
             opacity = 1,
             offsetx = 0,
             offsety = 0,
+            draworder = "index",
             properties = {},
             objects = {
               {
@@ -728,6 +730,7 @@ return {
       opacity = 1,
       offsetx = 0,
       offsety = 0,
+      draworder = "topdown",
       properties = {},
       objects = {
         {
@@ -749,8 +752,8 @@ return {
           name = "",
           type = "dragable",
           shape = "rectangle",
-          x = 720,
-          y = 530,
+          x = 704,
+          y = 512,
           width = 128,
           height = 64,
           rotation = 0,
@@ -785,6 +788,51 @@ return {
           gid = 3221225499,
           visible = true,
           properties = {}
+        },
+        {
+          id = 67,
+          name = "template",
+          type = "particle",
+          shape = "rectangle",
+          x = 948,
+          y = 476,
+          width = 32,
+          height = 32,
+          rotation = 0,
+          gid = 1,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 68,
+          name = "template",
+          type = "particle",
+          shape = "rectangle",
+          x = 604,
+          y = 398,
+          width = 32,
+          height = 32,
+          rotation = 0,
+          gid = 1,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 69,
+          name = "rectangle",
+          type = "",
+          shape = "rectangle",
+          x = 893,
+          y = 549,
+          width = 64,
+          height = 64,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["fillColor"] = "#ffe52b7a",
+            ["strokeColor"] = "#ffacf21d",
+            ["strokeWidth"] = 4
+          }
         }
       }
     }
