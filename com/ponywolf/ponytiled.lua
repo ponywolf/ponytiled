@@ -49,7 +49,15 @@ function M.new(data)
   local width, height = data.width * data.tilewidth, data.height * data.tileheight
 
   local function gidLookup(gid)
-    -- turn a gid into a filename
+    -- flipping merged from code by Sergey Lerg    
+    local flip = {}
+    flip.x = hasbit(gid, FlippedHorizontallyFlag)
+    flip.y = hasbit(gid, FlippedVerticallyFlag)          
+    flip.xy = hasbit(gid, FlippedDiagonallyFlag) 
+    gid = clearbit(gid, FlippedHorizontallyFlag)
+    gid = clearbit(gid, FlippedVerticallyFlag)
+    gid = clearbit(gid, FlippedDiagonallyFlag)
+    -- turn a gid into a filename    
     for i = 1, #tilesets do
       local tileset = tilesets[i]
       local firstgid = tileset.firstgid
@@ -58,7 +66,7 @@ function M.new(data)
         for k,v in pairs(tileset.tiles) do
           local tile = tileset.tiles[j]
           if (v.id or tonumber(k)) == (gid - firstgid) then
-            return v.image -- may need updating with documents directory
+            return v.image, flip -- may need updating with documents directory
           end
         end
       end
@@ -69,24 +77,46 @@ function M.new(data)
   for i = 1, #layers do
     local layer = layers[i]
     layer.properties = layer.properties or {} -- make sure we have a properties table
-    if layer.type == "objectgroup" then
-      local objectGroup = display.newGroup()
+    local objectGroup = display.newGroup()    
+    if layer.type == "tilelayer" then
+      if layer.compression or layer.encoding then
+        print ("ERROR: Tile layer encoding/compression not supported. Choose CSV or XML in map options.")
+      end
+      local item = 0
+      for j=0, data.height-1 do
+        for i=0, data.width-1 do
+          item = (j * data.width) + i
+          local tileNumber = layer.data[item] or 0
+          local gid, flip = gidLookup(tileNumber)
+          if gid then
+            local image = display.newImage(objectGroup, gid, 0, 0)
+            image.anchorX, image.anchorY = 0,1
+            image.x, image.y = (i-1) * data.tilewidth, (j+1) * data.tileheight
+            centerAnchor(image)
+            -- flip it
+            if flip.xy then
+              print("WARNING: Unsupported Tiled rotation x,y in tile ", i,j)
+            else
+              if flip.x then
+                image.xScale = -1
+              end
+              if flip.y then
+                image.yScale = -1
+              end
+            end          
+            -- apply custom properties
+            image = inherit(image, layer.properties)
+          end
+        end
+      end
+    elseif layer.type == "objectgroup" then
       for j = 1, #layer.objects do
         local object = layer.objects[j]
         object.properties = object.properties or {} -- make sure we have a properties table
         if object.gid then
-          -- Flipping merged from code by Sergey Lerg
-          local gid = object.gid
-          local flip = {}
-          flip.x = hasbit(gid, FlippedHorizontallyFlag)
-          flip.y = hasbit(gid, FlippedVerticallyFlag)          
-          flip.xy = hasbit(gid, FlippedDiagonallyFlag) 
-          gid = clearbit(gid, FlippedHorizontallyFlag)
-          gid = clearbit(gid, FlippedVerticallyFlag)
-          gid = clearbit(gid, FlippedDiagonallyFlag)
-          gid = gidLookup(gid)
+          local gid, flip = gidLookup(object.gid)
           if gid then
-            local image = display.newImageRect(gid, object.width, object.height)
+            local image = display.newImageRect(objectGroup, gid, object.width, object.height)
             -- name and type
             image.name = object.name
             image.type = object.type        
@@ -114,10 +144,9 @@ function M.new(data)
             -- apply custom properties
             image = inherit(image, object.properties)
             image = inherit(image, layer.properties)
-            objectGroup:insert(image)
           end
         else -- if all else fails make a simple rect
-          local rect = display.newRect(0,0, object.width, object.height)
+          local rect = display.newRect(0, 0, object.width, object.height)
           rect.anchorX, rect.anchorY = 0, 0
           rect.x, rect.y = object.x, object.y
           centerAnchor(rect)
@@ -129,11 +158,11 @@ function M.new(data)
           objectGroup:insert(rect)
         end
       end
-      objectGroup.name = layer.name
-      objectGroup.isVisible = layer.visible
-      objectGroup.alpha = layer.opacity
-      map:insert(objectGroup)
     end
+    objectGroup.name = layer.name
+    objectGroup.isVisible = layer.visible
+    objectGroup.alpha = layer.opacity
+    map:insert(objectGroup)  
   end
 
   function map:extend(...)
@@ -154,7 +183,7 @@ function M.new(data)
     end
   end
 
-  -- return first display object with name
+-- return first display object with name
   function map:findObject(name)
     for layers = self.numChildren,1,-1 do
       local layer = self[layers]
@@ -169,7 +198,7 @@ function M.new(data)
     return false
   end
 
-  -- return all display objects with type
+-- return all display objects with type
   function map:listTypes(...)
     local objects = {}
     for layers = self.numChildren,1,-1 do
@@ -187,7 +216,7 @@ function M.new(data)
     return objects
   end
 
-  -- add helpful values to the map itself
+-- add helpful values to the map itself
   map.designedWidth, map.designedHeight = width, height
   return map
 end
