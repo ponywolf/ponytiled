@@ -64,7 +64,6 @@ function M.new(data)
       local lastgid = firstgid + tileset.tilecount 
       if gid >= firstgid and gid <= lastgid then
         for k,v in pairs(tileset.tiles) do
-          local tile = tileset.tiles[j]
           if (v.id or tonumber(k)) == (gid - firstgid) then
             return v.image, flip -- may need updating with documents directory
           end
@@ -83,19 +82,19 @@ function M.new(data)
         print ("ERROR: Tile layer encoding/compression not supported. Choose CSV or XML in map options.")
       end
       local item = 0
-      for j=0, data.height-1 do
-        for i=0, data.width-1 do
-          item = (j * data.width) + i
+      for ty=0, data.height-1 do
+        for tx=0, data.width-1 do
+          item = (ty * data.width) + tx
           local tileNumber = layer.data[item] or 0
           local gid, flip = gidLookup(tileNumber)
           if gid then
             local image = display.newImage(objectGroup, gid, 0, 0)
             image.anchorX, image.anchorY = 0,1
-            image.x, image.y = (i-1) * data.tilewidth, (j+1) * data.tileheight
+            image.x, image.y = (tx-1) * data.tilewidth, (ty+1) * data.tileheight
             centerAnchor(image)
             -- flip it
             if flip.xy then
-              print("WARNING: Unsupported Tiled rotation x,y in tile ", i,j)
+              print("WARNING: Unsupported Tiled rotation x,y in tile ", tx,ty)
             else
               if flip.x then
                 image.xScale = -1
