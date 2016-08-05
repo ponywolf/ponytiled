@@ -22,8 +22,6 @@ physics.start()
 
 -- Demo 1 
 --local mapData = require "demo" -- load from lua export
---map:extend("dragable")
---map:extend("particle")
 
 -- Demo 2
 display.setDefault("magTextureFilter", "nearest")
@@ -32,5 +30,7 @@ local mapData = json.decodeFile("demo2.json") -- load from json export
 
 -- Base loading
 local map = tiled.new(mapData)
+map:extend("dragable")
+map:extend("particle")
 map.x,map.y = display.contentCenterX - map.designedWidth/2, display.contentCenterY - map.designedHeight/2
 
