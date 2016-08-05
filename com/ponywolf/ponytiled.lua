@@ -46,6 +46,40 @@ function M.new(data)
   local layers = data.layers
   local tilesets = data.tilesets
   local width, height = data.width * data.tilewidth, data.height * data.tileheight
+  local sheets = {}
+
+  local function loadTileset(num)
+    local tileset = tilesets[num]
+    local tsiw, tsih = tileset.imagewidth, tileset.imageheight
+    local margin, spacing = tileset.margin, tileset.spacing
+    local w, h = tileset.tilewidth, tileset.tileheight
+    local gid = 0
+    
+    local options = {
+      frames = {},
+      sheetContentWidth =  tsiw,
+      sheetContentHeight = tsih,
+    }
+
+    local frames = options.frames
+    local tsh = math.ceil((tsih - margin*2 - spacing) / (h + spacing))
+    local tsw = math.ceil((tsiw - margin*2 - spacing) / (w + spacing))
+
+    for j=1, tsh do
+      for i=1, tsw do
+        local element = {
+          x = (i-1)*(w + spacing) + margin,
+          y = (j-1)*(h + spacing) + margin,
+          width = w,
+          height = h,
+        }
+        gid = gid + 1
+        table.insert( frames, gid, element )
+      end
+    end
+    print ("LOADED:", tileset.image)
+    return graphics.newImageSheet(tileset.image, options )
+  end
 
   local function gidLookup(gid)
     -- flipping merged from code by Sergey Lerg    
@@ -56,15 +90,22 @@ function M.new(data)
     gid = clearbit(gid, FlippedHorizontallyFlag)
     gid = clearbit(gid, FlippedVerticallyFlag)
     gid = clearbit(gid, FlippedDiagonallyFlag)
-    -- turn a gid into a filename    
+    -- turn a gid into a filename or sheet/frame 
     for i = 1, #tilesets do
       local tileset = tilesets[i]
       local firstgid = tileset.firstgid
       local lastgid = firstgid + tileset.tilecount 
       if gid >= firstgid and gid <= lastgid then
-        for k,v in pairs(tileset.tiles) do
-          if (v.id or tonumber(k)) == (gid - firstgid) then
-            return v.image, flip -- may need updating with documents directory
+        if tileset.image then -- spritesheet
+          if not sheets[i] then 
+            sheets[i] = loadTileset(i)
+          end
+          return gid - firstgid + 1, flip, sheets[i]
+        else -- collection of images
+          for k,v in pairs(tileset.tiles) do
+            if (v.id or tonumber(k)) == gid - firstgid then
+              return v.image, flip -- may need updating with documents directory
+            end
           end
         end
       end
@@ -85,9 +126,9 @@ function M.new(data)
         for tx=0, data.width-1 do
           item = (ty * data.width) + tx
           local tileNumber = layer.data[item] or 0
-          local gid, flip = gidLookup(tileNumber)
+          local gid, flip, sheet = gidLookup(tileNumber)
           if gid then
-            local image = display.newImage(objectGroup, gid, 0, 0)
+            local image = sheet and display.newImage(objectGroup, sheet, gid, 0, 0) or display.newImage(objectGroup, gid, 0, 0)
             image.anchorX, image.anchorY = 0,1
             image.x, image.y = (tx-1) * data.tilewidth, (ty+1) * data.tileheight
             centerAnchor(image)
@@ -112,9 +153,9 @@ function M.new(data)
         local object = layer.objects[j]
         object.properties = object.properties or {} -- make sure we have a properties table
         if object.gid then
-          local gid, flip = gidLookup(object.gid)
+          local gid, flip, sheet = gidLookup(object.gid)
           if gid then
-            local image = display.newImageRect(objectGroup, gid, object.width, object.height)
+            local image = sheet and display.newImageRect(objectGroup, sheet, gid, object.width, object.height) or display.newImageRect(objectGroup, gid, object.width, object.height)
             -- name and type
             image.name = object.name
             image.type = object.type        

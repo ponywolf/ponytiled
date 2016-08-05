@@ -22,7 +22,7 @@ physics.start()
 
 
 --local mapData = require "demo" -- load from lua export
-local mapData = json.decodeFile("demo.json") -- load from json export
+local mapData = json.decodeFile("demo2.json") -- load from json export
 local map = tiled.new(mapData)
 map.x,map.y = display.contentCenterX - map.designedWidth/2, display.contentCenterY - map.designedHeight/2
 
