@@ -24,9 +24,11 @@ physics.start()
 --local mapData = require "demo" -- load from lua export
 
 -- Demo 2
-display.setDefault("magTextureFilter", "nearest")
-display.setDefault("minTextureFilter", "nearest")
-local mapData = json.decodeFile("demo2.json") -- load from json export
+--display.setDefault("magTextureFilter", "nearest")
+--display.setDefault("minTextureFilter", "nearest")
+--local mapData = json.decodeFile("demo2.json") -- load from json export
+
+local mapData = json.decodeFile("demo.json") -- load from json export
 
 -- Base loading
 local map = tiled.new(mapData)

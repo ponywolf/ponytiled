@@ -6,123 +6,112 @@
          "name":"fun",
          "objects":[
                 {
-                 "gid":2147483675,
-                 "height":64,
-                 "id":61,
+                 "height":0,
+                 "id":75,
                  "name":"",
-                 "rotation":0,
-                 "type":"dragable",
-                 "visible":true,
-                 "width":128,
-                 "x":768,
-                 "y":384
-                }, 
-                {
-                 "gid":27,
-                 "height":64,
-                 "id":62,
-                 "name":"",
-                 "rotation":0,
-                 "type":"dragable",
-                 "visible":true,
-                 "width":128,
-                 "x":1024,
-                 "y":320
-                }, 
-                {
-                 "gid":2147483675,
-                 "height":64,
-                 "id":63,
-                 "name":"",
-                 "rotation":180,
-                 "type":"dragable",
-                 "visible":true,
-                 "width":128,
-                 "x":896,
-                 "y":256
-                }, 
-                {
-                 "gid":3221225499,
-                 "height":64,
-                 "id":64,
-                 "name":"",
-                 "rotation":0,
-                 "type":"dragable",
-                 "visible":true,
-                 "width":128,
-                 "x":1024,
-                 "y":384
-                }, 
-                {
-                 "gid":1,
-                 "height":32,
-                 "id":67,
-                 "name":"template",
-                 "rotation":0,
-                 "type":"particle",
-                 "visible":true,
-                 "width":32,
-                 "x":1134,
-                 "y":464
-                }, 
-                {
-                 "gid":1,
-                 "height":32,
-                 "id":68,
-                 "name":"template",
-                 "rotation":0,
-                 "type":"particle",
-                 "visible":true,
-                 "width":32,
-                 "x":750,
-                 "y":484
-                }, 
-                {
-                 "height":64,
-                 "id":69,
-                 "name":"rectangle",
+                 "polyline":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":320,
+                         "y":640
+                        }, 
+                        {
+                         "x":1088,
+                         "y":640
+                        }, 
+                        {
+                         "x":1344,
+                         "y":0
+                        }],
                  "properties":
                     {
-                     "fillColor":"#ffe52b7a",
-                     "strokeColor":"#ffacf21d",
-                     "strokeWidth":4
+                     "bodyType":"static"
                     },
                  "propertytypes":
                     {
-                     "fillColor":"color",
-                     "strokeColor":"color",
-                     "strokeWidth":"int"
+                     "bodyType":"string"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":64,
-                 "x":896,
-                 "y":256
-                }, 
-                {
-                 "gid":11,
-                 "height":64,
-                 "id":70,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":128,
-                 "x":896,
-                 "y":512
-                }, 
-                {
-                 "gid":11,
-                 "height":64,
-                 "id":71,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":128,
-                 "x":896,
+                 "width":0,
+                 "x":320,
                  "y":192
+                }, 
+                {
+                 "gid":22,
+                 "height":64,
+                 "id":77,
+                 "name":"",
+                 "rotation":0,
+                 "type":"dragable",
+                 "visible":true,
+                 "width":64,
+                 "x":930.666666666667,
+                 "y":488
+                }, 
+                {
+                 "gid":22,
+                 "height":64,
+                 "id":78,
+                 "name":"",
+                 "rotation":0,
+                 "type":"dragable",
+                 "visible":true,
+                 "width":64,
+                 "x":1058.66666666667,
+                 "y":488
+                }, 
+                {
+                 "gid":38,
+                 "height":64,
+                 "id":80,
+                 "name":"",
+                 "rotation":31.5752620059481,
+                 "type":"dragable",
+                 "visible":true,
+                 "width":128,
+                 "x":764.719222489027,
+                 "y":605.75093947612
+                }, 
+                {
+                 "gid":38,
+                 "height":64,
+                 "id":81,
+                 "name":"",
+                 "rotation":0,
+                 "type":"dragable",
+                 "visible":true,
+                 "width":128,
+                 "x":896,
+                 "y":704
+                }, 
+                {
+                 "gid":38,
+                 "height":64,
+                 "id":82,
+                 "name":"",
+                 "rotation":0,
+                 "type":"dragable",
+                 "visible":true,
+                 "width":128,
+                 "x":1024,
+                 "y":704
+                }, 
+                {
+                 "gid":38,
+                 "height":64,
+                 "id":83,
+                 "name":"",
+                 "rotation":319.616352093551,
+                 "type":"dragable",
+                 "visible":true,
+                 "width":128,
+                 "x":1171.9825931564,
+                 "y":664.507572749132
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -130,19 +119,8 @@
          "width":0,
          "x":0,
          "y":0
-        }, 
-        {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0, 6, 0, 0, 6, 6, 0, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 6, 0, 0, 6, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 0, 6, 0, 0, 6, 6, 0, 6, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 0, 6, 0, 0, 6, 0, 0, 6, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 0, 6, 6, 0, 6, 6, 0, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":15,
-         "name":"tiles",
-         "opacity":1,
-         "type":"tilelayer",
-         "visible":true,
-         "width":30,
-         "x":0,
-         "y":0
         }],
- "nextobjectid":72,
+ "nextobjectid":119,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tileheight":64,

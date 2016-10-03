@@ -40,8 +40,18 @@ local function decodeTiledColor(hex)
   return r,g,b,a
 end
 
-function M.new(data)
-  local map = display.newGroup()  
+local function unpackPoints(points)
+  local t = {}
+  for i = 1,#points do
+    t[#t+1] = points[i].x
+    t[#t+1] = points[i].y
+  end
+  return t
+end
+
+function M.new(data, dir)
+  local map = display.newGroup()
+  dir = dir and (dir .. "/") or "" -- where does the map live?
 
   local layers = data.layers
   local tilesets = data.tilesets
@@ -54,7 +64,7 @@ function M.new(data)
     local margin, spacing = tileset.margin, tileset.spacing
     local w, h = tileset.tilewidth, tileset.tileheight
     local gid = 0
-    
+
     local options = {
       frames = {},
       sheetContentWidth =  tsiw,
@@ -136,12 +146,8 @@ function M.new(data)
             if flip.xy then
               print("WARNING: Unsupported Tiled rotation x,y in tile ", tx,ty)
             else
-              if flip.x then
-                image.xScale = -1
-              end
-              if flip.y then
-                image.yScale = -1
-              end
+              if flip.x then image.xScale = -1 end
+              if flip.y then image.yScale = -1 end
             end          
             -- apply custom properties
             image = inherit(image, layer.properties)
@@ -155,7 +161,8 @@ function M.new(data)
         if object.gid then
           local gid, flip, sheet = gidLookup(object.gid)
           if gid then
-            local image = sheet and display.newImageRect(objectGroup, sheet, gid, object.width, object.height) or display.newImageRect(objectGroup, gid, object.width, object.height)
+            local image = sheet and display.newImageRect(objectGroup, sheet, gid, object.width, object.height) or
+            display.newImageRect(objectGroup, dir .. gid, object.width, object.height)
             -- name and type
             image.name = object.name
             image.type = object.type        
@@ -169,32 +176,65 @@ function M.new(data)
             if flip.xy then
               print("WARNING: Unsupported Tiled rotation x,y in ", object.name)
             else
-              if flip.x then
-                image.xScale = -1
-              end
-              if flip.y then
-                image.yScale = -1
-              end
+              if flip.x then image.xScale = -1 end
+              if flip.y then image.yScale = -1 end
             end          
-            -- simple phyics
+            -- simple physics
             if object.properties.bodyType then
               physics.addBody(image, object.properties.bodyType, object.properties)
             end          
             -- apply custom properties
+            image = inherit(image, layer.properties)            
             image = inherit(image, object.properties)
-            image = inherit(image, layer.properties)
           end
+        elseif object.polygon or object.polyline then -- Polygon/line
+          local points = object.polygon or object.polyline
+          local polygon
+          if object.polygon then 
+            local xMax, xMin, yMax, yMin = -4294967296, 4294967296, -4294967296, 4294967296 -- 32 ^ 2 a large number             
+            for p = 1, #points do
+              if points[p].x < xMin then xMin = points[p].x end               
+              if points[p].y < yMin then yMin = points[p].y end               
+              if points[p].x > xMax then xMax = points[p].x end               
+              if points[p].y > yMax then yMax = points[p].y end   
+            end
+            local centerX, centerY = (xMax + xMin) / 2, (yMax + yMin) / 2  
+            polygon = display.newPolygon(objectGroup, object.x, object.y, unpackPoints(points))
+            polygon:translate(centerX, centerY)
+          else
+            polygon = display.newLine( objectGroup, points[1].x, points[1].y, points[2].x, points[2].y)            
+            local originX, originY = points[1].x, points[1].y
+            for p = 3, #points do
+              polygon:append(points[p].x, points[p].y)
+            end          
+            polygon.x,polygon.y = object.x, object.y
+            polygon:translate(originX, originY)
+          end
+          -- simple physics
+          if object.properties.bodyType then
+            physics.addBody(polygon, object.properties.bodyType, object.properties)
+          end              
+          -- apply custom properties
+          polygon = inherit(polygon, layer.properties)          
+          polygon = inherit(polygon, object.properties)
+          -- vector properties
+          if polygon.fillColor then polygon:setFillColor(decodeTiledColor(polygon.fillColor)) end
+          if polygon.strokeColor then polygon:setStrokeColor(decodeTiledColor(polygon.strokeColor)) end                       
         else -- if all else fails make a simple rect
-          local rect = display.newRect(0, 0, object.width, object.height)
+          local rect = display.newRect(objectGroup, 0, 0, object.width, object.height)
           rect.anchorX, rect.anchorY = 0, 0
           rect.x, rect.y = object.x, object.y
           centerAnchor(rect)
+          -- simple physics
+          if object.properties.bodyType then
+            physics.addBody(polygon, object.properties.bodyType, object.properties)
+          end 
           -- apply custom properties
-          rect = inherit(rect, object.properties)
           rect = inherit(rect, layer.properties)          
+          rect = inherit(rect, object.properties)          
+          -- vector properties          
           if rect.fillColor then rect:setFillColor(decodeTiledColor(rect.fillColor)) end
           if rect.strokeColor then rect:setStrokeColor(decodeTiledColor(rect.strokeColor)) end                
-          objectGroup:insert(rect)
         end
       end
     end
@@ -255,7 +295,7 @@ function M.new(data)
     return objects
   end
 
--- add helpful values to the map itself
+  -- add helpful values to the map itself
   map.designedWidth, map.designedHeight = width, height
   return map
 end

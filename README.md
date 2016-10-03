@@ -1,7 +1,7 @@
 # ponytiled
 *ponytiled* is a simple Tiled Map Loader for Corona SDK
 
-In 270 lines of code, ponytiled loads a sub-set of Tiled layers, tilesets and image collections. Built in plugin hooks and extensions make it easy to add support for many custom object types.
+In 300 lines of code, ponytiled loads a sub-set of Tiled layers, tilesets and image collections. Built in plugin hooks and extensions make it easy to add support for many custom object types.
 
 - [x] Loads .LUA + JSON exports from www.mapeditor.org
 - [x] Adds basic properties from tiled including physics
@@ -10,6 +10,7 @@ In 270 lines of code, ponytiled loads a sub-set of Tiled layers, tilesets and im
 - [x] Supports object x/y flipping and re-centering of anchorX/anchorY for Corona
 - [x] Particle plugin
 - [x] Rectangle shape with fillColor and strokeColor support
+- [x] Polygon import with physics support for edge chains
 
 Watch an in depth video on how to get started...
 
