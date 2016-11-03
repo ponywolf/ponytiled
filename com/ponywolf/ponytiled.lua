@@ -144,7 +144,7 @@ function M.new(data, dir)
             centerAnchor(image)
             -- flip it
             if flip.xy then
-              print("WARNING: Unsupported Tiled rotation x,y in tile ", tx,ty)
+              print("WARNING: Unsupported Tiled mirror x,y in tile ", tx,ty)
             else
               if flip.x then image.xScale = -1 end
               if flip.y then image.yScale = -1 end

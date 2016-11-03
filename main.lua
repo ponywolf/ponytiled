@@ -26,9 +26,9 @@ physics.start()
 -- Demo 2
 --display.setDefault("magTextureFilter", "nearest")
 --display.setDefault("minTextureFilter", "nearest")
---local mapData = json.decodeFile("demo2.json") -- load from json export
+--local mapData = json.decodeFile(system.pathForFile("demo2.json", system.ResourceDirectory))  -- load from json export
 
-local mapData = json.decodeFile("demo.json") -- load from json export
+local mapData = json.decodeFile(system.pathForFile("demo.json", system.ResourceDirectory)) -- load from json export
 
 -- Base loading
 local map = tiled.new(mapData)
