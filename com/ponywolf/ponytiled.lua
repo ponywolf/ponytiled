@@ -2,8 +2,10 @@
 --
 -- Loads LUA saved map files from Tiled http://www.mapeditor.org/
 
-local M = {}
 local physics = require "physics"
+
+local M = {}
+local defaultExtensions = "com.ponywolf.plugins."
 
 local FlippedHorizontallyFlag   = 0x80000000
 local FlippedVerticallyFlag     = 0x40000000
@@ -227,7 +229,7 @@ function M.new(data, dir)
           centerAnchor(rect)
           -- simple physics
           if object.properties.bodyType then
-            physics.addBody(polygon, object.properties.bodyType, object.properties)
+            physics.addBody(rect, object.properties.bodyType, object.properties)
           end 
           -- apply custom properties
           rect = inherit(rect, layer.properties)          
@@ -245,13 +247,13 @@ function M.new(data, dir)
   end
 
   function map:extend(...)
-    local plugins = arg or {}
+    local extensions = arg or {}
     -- each custom object above has its own ponywolf.plugin module
-    for t = 1, #plugins do 
+    for t = 1, #extensions do 
       -- load each module based on type
-      local plugin = require ("com.ponywolf.plugins." .. plugins[t])
+      local plugin = require ((map.extensions or defaultExtensions) .. extensions[t])
       -- find each type of tiled object
-      local images = map:listTypes(plugins[t])
+      local images = map:listTypes(extensions[t])
       if images then 
         -- do we have at least one?
         for i = 1, #images do
@@ -295,8 +297,55 @@ function M.new(data, dir)
     return objects
   end
 
+  function map:findLayer(name)
+    if self.numChildren then
+      for layers=1, self.numChildren do
+        if self[layers].name==name then -- search layers
+          return self[layers]
+        end
+      end
+    end
+    return false
+  end
+
+  local function rightToLeft(a,b)
+    return (a.x or 0) + (a.width or 0) * 0.5 > (b.x or 0) + (b.width or 0) * 0.5
+  end
+
+  local function upToDown(a,b)
+    return (a.y or 0) + (a.height or 0) * 0.5 < (b.y or 0) + (b.height or 0) * 0.5 
+  end
+
+  function map:sort()
+    for layer = 1, self.numChildren do
+      local objects = {}    
+      local layerToSort = self[layer] or {}
+      if layerToSort.numChildren then 
+        for i = 1, layerToSort.numChildren do
+          objects[#objects+1] = layerToSort[i]
+        end
+        table.sort(objects, rightToLeft)  
+        table.sort(objects, upToDown)      
+      end
+      for i = #objects, 1, -1 do
+        if objects[i].toBack then
+          objects[i]:toBack()
+        end      
+      end      
+    end
+  end
+
+  -- sort map by defaults
+  map:sort()
+
   -- add helpful values to the map itself
   map.designedWidth, map.designedHeight = width, height
+
+  -- set the background color to the map background
+  if data.backgroundcolor then
+    display.setDefault("background", decodeTiledColor("FF" .. data.backgroundcolor))
+  end
+
   return map
 end
 
