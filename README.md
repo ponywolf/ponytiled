@@ -38,21 +38,21 @@ Most of the time you will store you maps and images/tilesets in a directory. The
 
 ```
 local mapData = require "maps.objects.sandbox" -- load from lua export
-local map = tiled.new(mapData, "maps/objects") -- look for images is /maps/objects/
+local map = tiled.new(mapData, "maps/objects") -- look for images in /maps/objects/
 ```
 
 #### map
 
 **ponytiled** returns a map display object that contains all the layers, objects and tiles for the exported map. (0,0) is the *designed* upper left hand corner of the map. Objects may be above or to the left of the origin or beyond the designed width and height.
 
-mpa objects have all the same properties of a normal display group.
+map display objects have all the same properties of a normal display group.
 
 ```
 map.xScale = 2
 map.alpha = 0.5
 map:translate(-30,30)
 ```
-map objects have functions to make it easy to find image objects to manipulate them with code.
+map.designedWidth and map.designedHeight are the width and height of you map as specified in tiled's new map options. map objects also have functions to make it easy to find image objects to manipulate them with code.
 
 #### map:findObject(name)
 This funtion will return the *first* display object with the name specified. Great for getting to the display object of a unique item in the map.
@@ -69,7 +69,7 @@ To find multiple objects, use map:listTypes(). This will return a table of displ
 ![Setting a "coin" type](http://imgur.com/iR3DdDY.png)
 
 ```
-myCoins = map:listTypes( "coins" )
+myCoins = map:listTypes( "coin" )
 print("Number of coins in map", #myCoins)
 display.remove(myCoins[1])
 ```
@@ -77,7 +77,7 @@ display.remove(myCoins[1])
 To find a layer (which itself is a nested display group), use map:findLayer(). 
 ```
 myLayer = map:findLayer( "hud" )
-myLayer.alpha = 0
+myLayer.alpha = 0.5
 ```
 ### Extensions
 
