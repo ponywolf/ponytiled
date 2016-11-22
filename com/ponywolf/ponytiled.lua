@@ -217,7 +217,7 @@ function M.new( data, dir )
 					-- Simple physics
 					if object.properties.bodyType then
 						if (not object.properties.bodyType == "static") and object.polyline then
-							print("WARNING: "dynamic" bodyType not supported for polylines."
+							print("WARNING: dynamic bodyType not supported for polylines.")
 						end
 						physics.addBody( polygon, object.properties.bodyType, object.properties )
 					end

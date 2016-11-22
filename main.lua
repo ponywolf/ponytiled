@@ -29,3 +29,8 @@ local map = tiled.new(mapData, "maps/objects") -- look for images is /maps/objec
 
 -- center the map on screen
 map.x,map.y = display.contentCenterX - map.designedWidth/2, display.contentCenterY - map.designedHeight/2
+
+-- drag the whole map for fun
+local dragable = require "com.ponywolf.plugins.dragable"
+map = dragable.new(map)
+
