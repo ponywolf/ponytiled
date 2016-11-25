@@ -94,5 +94,5 @@ The most exciting part of working in Tiled & Corona is the idea of custom proper
 
 #### bodyType
 
-One special custom property is *bodyType*. This triggers **ponytiled** to add a physics body to an object and pass the rest of the custom properties as physics options. *Rectangle bodies are currently supported by default, adding a **radius** property will give you a round body.*
+One special custom property is *bodyType*. This triggers **ponytiled** to add a physics body to an object and pass the rest of the custom properties as physics options. Rectangle bodies are currently supported by default, adding a **radius** property will give you a round body.
 
