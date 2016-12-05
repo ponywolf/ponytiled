@@ -112,7 +112,8 @@ function M.new( data, dir )
 					if not sheets[i] then
 						sheets[i] = loadTileset(i)
 					end
-					return gid - firstgid + 1, flip, sheets[i]
+          gid = gid - firstgid + 1
+          return gid, flip, sheets[i], tileset.tileproperties[tostring(gid-1)]
 				else  -- Collection of images
 					for k, v in pairs( tileset.tiles ) do
 						if ( v.id or tonumber(k) ) == gid - firstgid then
@@ -152,8 +153,13 @@ function M.new( data, dir )
 							if flip.x then image.xScale = -1 end
 							if flip.y then image.yScale = -1 end
 						end
-						-- Apply custom properties
-						image = inherit( image, layer.properties )
+            -- Tile physics
+            if properties.bodyType then
+              physics.addBody( image, properties.bodyType, properties )
+            end
+            -- Apply custom properties
+            image = inherit( image, layer.properties )            
+            image = inherit( image, properties )
 					end
 				end
 			end
