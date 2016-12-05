@@ -16,16 +16,16 @@ physics.start()
 -- Demo 1 
 
 -- Load a "pixel perfect" map from a JSON export
---display.setDefault("magTextureFilter", "nearest")
---display.setDefault("minTextureFilter", "nearest")
---local mapData = json.decodeFile(system.pathForFile("maps/tiles/tilemap.json", system.ResourceDirectory))  -- load from json export
---local map = tiled.new(mapData, "maps/tiles")
+display.setDefault("magTextureFilter", "nearest")
+display.setDefault("minTextureFilter", "nearest")
+local mapData = json.decodeFile(system.pathForFile("maps/tiles/tilemap.json", system.ResourceDirectory))  -- load from json export
+local map = tiled.new(mapData, "maps/tiles")
 
 -- Demo 2 
 
 -- Load an object based map from a lua file
-local mapData = require "maps.objects.sandbox" -- load from lua export
-local map = tiled.new(mapData, "maps/objects") -- look for images is /maps/objects/
+--local mapData = require "maps.objects.sandbox" -- load from lua export
+--local map = tiled.new(mapData, "maps/objects") -- look for images is /maps/objects/
 
 -- center the map on screen
 map.x,map.y = display.contentCenterX - map.designedWidth/2, display.contentCenterY - map.designedHeight/2

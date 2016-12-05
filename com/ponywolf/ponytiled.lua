@@ -137,7 +137,7 @@ function M.new( data, dir )
 			local item = 0
 			for ty = 0, data.height-1 do
 				for tx = 0, data.width-1 do
-					item = ( ty * data.width ) + tx
+					item = 1 + ( ty * data.width ) + tx
 					local tileNumber = layer.data[item] or 0
 					local gid, flip, sheet = gidLookup( tileNumber )
 					if gid then
