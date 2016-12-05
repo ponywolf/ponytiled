@@ -113,7 +113,7 @@ function M.new( data, dir )
 						sheets[i] = loadTileset(i)
 					end
           gid = gid - firstgid + 1
-          return gid, flip, sheets[i], tileset.tileproperties[tostring(gid-1)]
+          return gid, flip, sheets[i], (tileset.tileproperties and tileset.tileproperties[tostring(gid-1)] or {})
 				else  -- Collection of images
 					for k, v in pairs( tileset.tiles ) do
 						if ( v.id or tonumber(k) ) == gid - firstgid then
@@ -140,7 +140,8 @@ function M.new( data, dir )
 				for tx = 0, data.width-1 do
 					item = 1 + ( ty * data.width ) + tx
 					local tileNumber = layer.data[item] or 0
-					local gid, flip, sheet = gidLookup( tileNumber )
+					local gid, flip, sheet, properties = gidLookup( tileNumber )
+					properties = properties or {}
 					if gid then
 						local image = sheet and display.newImage( objectGroup, sheet, gid, 0, 0 ) or display.newImage( objectGroup, gid, 0, 0 )
 						image.anchorX, image.anchorY = 0, 1
