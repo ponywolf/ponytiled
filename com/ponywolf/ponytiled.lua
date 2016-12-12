@@ -143,7 +143,7 @@ function M.new( data, dir )
 					local gid, flip, sheet, properties = gidLookup( tileNumber )
 					properties = properties or {}
 					if gid then
-						local image = sheet and display.newImage( objectGroup, sheet, dir .. gid, 0, 0 ) or display.newImage( objectGroup, dir .. gid, 0, 0 )
+						local image = sheet and display.newImage( objectGroup, sheet, gid, 0, 0 ) or display.newImage( objectGroup, dir .. gid, 0, 0 )
 						image.anchorX, image.anchorY = 0, 1
 						image.x, image.y = ( tx - 1 ) * data.tilewidth, ( ty + 1 ) * data.tileheight
 						centerAnchor( image )
@@ -177,6 +177,7 @@ function M.new( data, dir )
 						-- Name and type
 						image.name = object.name
 						image.type = object.type
+						image.gid = gid
 						-- Apply base properties
 						image.anchorX, image.anchorY = 0, 1
 						image.x, image.y = object.x, object.y
