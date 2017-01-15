@@ -95,15 +95,15 @@ function M.new(data, dir)
 
   local function findLast(tileset)
     local last = tileset.firstgid
-    if tileset.image then
-      return tileset.firstgid + tileset.tilecount
-    elseif tileset.tiles then 
+    if tileset.tiles then 
       for k,v in pairs(tileset.tiles) do
         if tonumber(k) + tileset.firstgid > last then
           last = tonumber(k) + tileset.firstgid
         end
       end
       return last
+    elseif tileset.image then
+      return tileset.firstgid + tileset.tilecount
     end
   end
 
@@ -129,7 +129,7 @@ function M.new(data, dir)
           return gid - firstgid + 1, flip, sheets[i]
         else -- collection of images
           for k,v in pairs(tileset.tiles) do
-            if tonumber(k) == (gid - firstgid) then
+            if tonumber(k) == (gid - firstgid + 0 ) then
               return v.image, flip -- may need updating with documents directory
             end
           end

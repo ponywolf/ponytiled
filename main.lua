@@ -23,9 +23,9 @@ local map = tiled.new(mapData, "maps/tiles")
 
 -- Demo 2 
 
--- Load an object based map from a lua file
---local mapData = require "maps.objects.sandbox" -- load from lua export
---local map = tiled.new(mapData, "maps/objects") -- look for images is /maps/objects/
+-- Load an object based map from a JSON file
+--local mapData = json.decodeFile(system.pathForFile("maps/objects/sandbox.json", system.ResourceDirectory))  -- load from json export
+--local map = tiled.new(mapData, "maps/objects")
 
 -- center the map on screen
 map.x,map.y = display.contentCenterX - map.designedWidth/2, display.contentCenterY - map.designedHeight/2
