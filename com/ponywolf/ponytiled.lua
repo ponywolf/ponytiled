@@ -359,7 +359,11 @@ function M.new(data, dir)
 
   -- set the background color to the map background
   if data.backgroundcolor then
-    display.setDefault("background", decodeTiledColor("FF" .. data.backgroundcolor))
+    if type(data.backgroundcolor) == "string" then
+      display.setDefault("background", decodeTiledColor("FF" .. data.backgroundcolor))
+    elseif type(data.backgroundcolor) == "table" then
+      display.setDefault("background", unpack(data.backgroundcolor))
+    end
   end
 
   return map
