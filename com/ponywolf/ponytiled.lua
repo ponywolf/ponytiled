@@ -362,6 +362,7 @@ function M.new(data, dir)
     if type(data.backgroundcolor) == "string" then
       display.setDefault("background", decodeTiledColor("FF" .. data.backgroundcolor))
     elseif type(data.backgroundcolor) == "table" then
+      for i = 1, #data.backgroundcolor do data.backgroundcolor[i] = data.backgroundcolor[i] / 255 end
       display.setDefault("background", unpack(data.backgroundcolor))
     end
   end
