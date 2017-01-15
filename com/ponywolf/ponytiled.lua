@@ -89,18 +89,22 @@ function M.new(data, dir)
         table.insert( frames, gid, element )
       end
     end
-    print ("LOADED:", tileset.image)
-    return graphics.newImageSheet(tileset.image, options )
+    print ("LOADED:", dir .. tileset.image)
+    return graphics.newImageSheet(dir .. tileset.image, options )
   end
 
   local function findLast(tileset)
     local last = tileset.firstgid
-    for k,v in pairs(tileset.tiles) do
-      if tonumber(k) + tileset.firstgid > last then
-        last = tonumber(k) + tileset.firstgid
+    if tileset.image then
+      return tileset.firstgid + tileset.tilecount
+    elseif tileset.tiles then 
+      for k,v in pairs(tileset.tiles) do
+        if tonumber(k) + tileset.firstgid > last then
+          last = tonumber(k) + tileset.firstgid
+        end
       end
+      return last
     end
-    return last
   end
 
   local function gidLookup(gid)
@@ -146,7 +150,7 @@ function M.new(data, dir)
       local item = 0
       for ty=0, data.height-1 do
         for tx=0, data.width-1 do
-          item = (ty * data.width) + tx
+          item = 1 + (ty * data.width) + tx
           local tileNumber = layer.data[item] or 0
           local gid, flip, sheet = gidLookup(tileNumber)
           if gid then
