@@ -158,8 +158,8 @@ function M.new(data, dir)
           if gid then
             local image = sheet and display.newImage(objectGroup, sheet, gid, 0, 0) or display.newImage(objectGroup, gid, 0, 0)
             image.anchorX, image.anchorY = 0,1
-            image.x, image.y = (tx-1) * data.tilewidth, (ty+1) * data.tileheight
             image.gid = tileNumber
+            image.x, image.y = (tx-1) * data.tilewidth, (ty+1) * data.tileheight
             centerAnchor(image)
             -- flip it
             if flip.xy then
@@ -233,6 +233,10 @@ function M.new(data, dir)
           -- simple physics
           if object.properties.bodyType then
             physics.addBody(polygon, object.properties.bodyType, object.properties)
+          end  
+          -- name and type
+          polygon.name = object.name
+          polygon.type = object.type 
           -- apply custom properties
           polygon = inherit(polygon, layer.properties)          
           polygon = inherit(polygon, object.properties)
@@ -243,11 +247,16 @@ function M.new(data, dir)
           local rect = display.newRect(objectGroup, 0, 0, object.width, object.height)
           rect.anchorX, rect.anchorY = 0, 0
           rect.x, rect.y = object.x, object.y
+          rect.rotation = object.rotation
+          rect.isVisible = object.visible
           centerAnchor(rect)
           -- simple physics
           if object.properties.bodyType then
             physics.addBody(rect, object.properties.bodyType, object.properties)
           end 
+          -- name and type
+          rect.name = object.name
+          rect.type = object.type              
           -- apply custom properties
           rect = inherit(rect, layer.properties)          
           rect = inherit(rect, object.properties)          
@@ -323,6 +332,19 @@ function M.new(data, dir)
       end
     end
     return false
+  end
+
+  function map:centerObject(obj)
+    -- moves the world, so the specified object is on screen
+    if obj == nil then return false end
+    obj = self:findObject(obj)
+    
+    -- easiest way to scroll a map based on a character
+    -- find the difference between the hero and the display center
+    -- and move the world to compensate
+    local objx, objy = obj:localToContent(0,0)
+    objx, objy = centerX - objx, centerY - objy
+    self.x, self.y = self.x + objx, self.y + objy
   end
 
   local function rightToLeft(a,b)
