@@ -17,7 +17,7 @@ local function clearbit(x, p) return hasbit(x, p) and x - p or x end
 
 local function inherit(image, properties)
   for k,v in pairs(properties) do
-    image[k] = v
+    image[k] = v == "" and nil or v
   end
   return image
 end
@@ -50,6 +50,8 @@ local function unpackPoints(points)
   end
   return t
 end
+
+local centerX, centerY = display.contentCenterX, display.contentCenterY
 
 function M.new(data, dir)
   local map = display.newGroup()
@@ -231,7 +233,6 @@ function M.new(data, dir)
           -- simple physics
           if object.properties.bodyType then
             physics.addBody(polygon, object.properties.bodyType, object.properties)
-          end              
           -- apply custom properties
           polygon = inherit(polygon, layer.properties)          
           polygon = inherit(polygon, object.properties)
