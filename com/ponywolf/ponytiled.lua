@@ -76,8 +76,8 @@ function M.new(data, dir)
     }
 
     local frames = options.frames
-    local tsh = math.ceil((tsih - margin*2 - spacing) / (h + spacing))
-    local tsw = math.ceil((tsiw - margin*2 - spacing) / (w + spacing))
+    local tsh = tileset.tilecount / tileset.columns 
+    local tsw = tileset.columns 
 
     for j=1, tsh do
       for i=1, tsw do
@@ -338,7 +338,7 @@ function M.new(data, dir)
     -- moves the world, so the specified object is on screen
     if obj == nil then return false end
     obj = self:findObject(obj)
-    
+
     -- easiest way to scroll a map based on a character
     -- find the difference between the hero and the display center
     -- and move the world to compensate

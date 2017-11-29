@@ -3,7 +3,6 @@
  "layers":[
         {
          "draworder":"topdown",
-         "height":31,
          "name":"parallax",
          "objects":[
                 {
@@ -165,13 +164,11 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":80,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":40,
          "name":"background",
          "objects":[
                 {
@@ -237,13 +234,11 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":80,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":40,
          "name":"ground",
          "objects":[
                 {
@@ -841,13 +836,11 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":80,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":40,
          "name":"castle",
          "objects":[
                 {
@@ -1201,13 +1194,11 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":80,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":40,
          "name":"castledeco",
          "objects":[
                 {
@@ -1257,13 +1248,11 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":80,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":31,
          "name":"shading",
          "objects":[
                 {
@@ -1473,13 +1462,11 @@
          "opacity":0.360000014305115,
          "type":"objectgroup",
          "visible":true,
-         "width":80,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":40,
          "name":"game",
          "objects":[
                 {
@@ -1617,13 +1604,11 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":80,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":31,
          "name":"above",
          "objects":[
                 {
@@ -1641,13 +1626,11 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":80,
          "x":0,
          "y":0
         }, 
         {
          "draworder":"topdown",
-         "height":31,
          "name":"bounds",
          "objects":[
                 {
@@ -1691,13 +1674,13 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":false,
-         "width":80,
          "x":0,
          "y":0
         }],
  "nextobjectid":203,
  "orientation":"orthogonal",
  "renderorder":"right-down",
+ "tiledversion":"1.0.2",
  "tileheight":32,
  "tilesets":[
         {
@@ -1712,256 +1695,381 @@
             {
              "0":
                 {
-                 "image":"alter.png"
+                 "image":"alter.png",
+                 "imageheight":192,
+                 "imagewidth":160
                 },
              "1":
                 {
-                 "image":"blobBlue.png"
+                 "image":"blobBlue.png",
+                 "imageheight":64,
+                 "imagewidth":96
                 },
              "10":
                 {
-                 "image":"doorGreenStroke.png"
+                 "image":"doorGreenStroke.png",
+                 "imageheight":192,
+                 "imagewidth":160
                 },
              "11":
                 {
-                 "image":"doorRedStroked.png"
+                 "image":"doorRedStroked.png",
+                 "imageheight":192,
+                 "imagewidth":160
                 },
              "12":
                 {
-                 "image":"doorStroked.png"
+                 "image":"doorStroked.png",
+                 "imageheight":192,
+                 "imagewidth":160
                 },
              "13":
                 {
-                 "image":"earthWall.png"
+                 "image":"earthWall.png",
+                 "imageheight":64,
+                 "imagewidth":64
                 },
              "14":
                 {
-                 "image":"exit.png"
+                 "image":"exit.png",
+                 "imageheight":192,
+                 "imagewidth":160
                 },
              "15":
                 {
-                 "image":"flare.png"
+                 "image":"flare.png",
+                 "imageheight":192,
+                 "imagewidth":192
                 },
              "16":
                 {
-                 "image":"gemBlueStroked.png"
+                 "image":"gemBlueStroked.png",
+                 "imageheight":64,
+                 "imagewidth":64
                 },
              "17":
                 {
-                 "image":"gemRedStroked.png"
+                 "image":"gemRedStroked.png",
+                 "imageheight":64,
+                 "imagewidth":64
                 },
              "18":
                 {
-                 "image":"grassLarge.png"
+                 "image":"grassLarge.png",
+                 "imageheight":32,
+                 "imagewidth":224
                 },
              "19":
                 {
-                 "image":"grassSmall.png"
+                 "image":"grassSmall.png",
+                 "imageheight":32,
+                 "imagewidth":160
                 },
              "2":
                 {
-                 "image":"blobGreen.png"
+                 "image":"blobGreen.png",
+                 "imageheight":64,
+                 "imagewidth":96
                 },
              "20":
                 {
-                 "image":"grey.png"
+                 "image":"grey.png",
+                 "imageheight":64,
+                 "imagewidth":64
                 },
              "21":
                 {
-                 "image":"hero.png"
+                 "image":"hero.png",
+                 "imageheight":160,
+                 "imagewidth":128
                 },
              "22":
                 {
-                 "image":"keyGreenStroked.png"
+                 "image":"keyGreenStroked.png",
+                 "imageheight":64,
+                 "imagewidth":96
                 },
              "23":
                 {
-                 "image":"keyRedStroked.png"
+                 "image":"keyRedStroked.png",
+                 "imageheight":64,
+                 "imagewidth":96
                 },
              "24":
                 {
-                 "image":"keyYellowStroked.png"
+                 "image":"keyYellowStroked.png",
+                 "imageheight":64,
+                 "imagewidth":96
                 },
              "25":
                 {
-                 "image":"platform1.png"
+                 "image":"platform1.png",
+                 "imageheight":64,
+                 "imagewidth":192
                 },
              "26":
                 {
-                 "image":"platform2.png"
+                 "image":"platform2.png",
+                 "imageheight":64,
+                 "imagewidth":192
                 },
              "27":
                 {
-                 "image":"platform3.png"
+                 "image":"platform3.png",
+                 "imageheight":64,
+                 "imagewidth":192
                 },
              "28":
                 {
-                 "image":"platform4.png"
+                 "image":"platform4.png",
+                 "imageheight":64,
+                 "imagewidth":192
                 },
              "29":
                 {
-                 "image":"platformBase1.png"
+                 "image":"platformBase1.png",
+                 "imageheight":96,
+                 "imagewidth":256
                 },
              "3":
                 {
-                 "image":"blue.png"
+                 "image":"blue.png",
+                 "imageheight":64,
+                 "imagewidth":64
                 },
              "30":
                 {
-                 "image":"platformBase2.png"
+                 "image":"platformBase2.png",
+                 "imageheight":96,
+                 "imagewidth":256
                 },
              "31":
                 {
-                 "image":"platformBase3.png"
+                 "image":"platformBase3.png",
+                 "imageheight":96,
+                 "imagewidth":256
                 },
              "32":
                 {
-                 "image":"platformBase4.png"
+                 "image":"platformBase4.png",
+                 "imageheight":96,
+                 "imagewidth":256
                 },
              "33":
                 {
-                 "image":"platformBlock1.png"
+                 "image":"platformBlock1.png",
+                 "imageheight":96,
+                 "imagewidth":128
                 },
              "34":
                 {
-                 "image":"platformBlock2.png"
+                 "image":"platformBlock2.png",
+                 "imageheight":96,
+                 "imagewidth":128
                 },
              "35":
                 {
-                 "image":"platformBlock3.png"
+                 "image":"platformBlock3.png",
+                 "imageheight":96,
+                 "imagewidth":128
                 },
              "36":
                 {
-                 "image":"platformBlock4.png"
+                 "image":"platformBlock4.png",
+                 "imageheight":96,
+                 "imagewidth":128
                 },
              "37":
                 {
-                 "image":"platformConnector1.png"
+                 "image":"platformConnector1.png",
+                 "imageheight":64,
+                 "imagewidth":96
                 },
              "38":
                 {
-                 "image":"platformConnector2.png"
+                 "image":"platformConnector2.png",
+                 "imageheight":64,
+                 "imagewidth":96
                 },
              "39":
                 {
-                 "image":"platformConnector3.png"
+                 "image":"platformConnector3.png",
+                 "imageheight":64,
+                 "imagewidth":96
                 },
              "4":
                 {
-                 "image":"bombStroked.png"
+                 "image":"bombStroked.png",
+                 "imageheight":128,
+                 "imagewidth":96
                 },
              "40":
                 {
-                 "image":"platformConnector4.png"
+                 "image":"platformConnector4.png",
+                 "imageheight":64,
+                 "imagewidth":96
                 },
              "41":
                 {
-                 "image":"pushBlock1.png"
+                 "image":"pushBlock1.png",
+                 "imageheight":96,
+                 "imagewidth":96
                 },
              "42":
                 {
-                 "image":"pushBlock2.png"
+                 "image":"pushBlock2.png",
+                 "imageheight":96,
+                 "imagewidth":96
                 },
              "43":
                 {
-                 "image":"pushBlock3.png"
+                 "image":"pushBlock3.png",
+                 "imageheight":96,
+                 "imagewidth":96
                 },
              "44":
                 {
-                 "image":"shadow.png"
+                 "image":"shadow.png",
+                 "imageheight":64,
+                 "imagewidth":64
                 },
              "45":
                 {
-                 "image":"shieldStroked.png"
+                 "image":"shieldStroked.png",
+                 "imageheight":93,
+                 "imagewidth":93
                 },
              "46":
                 {
-                 "image":"sign.png"
+                 "image":"sign.png",
+                 "imageheight":128,
+                 "imagewidth":160
                 },
              "48":
                 {
-                 "image":"swordStroked.png"
+                 "image":"swordStroked.png",
+                 "imageheight":96,
+                 "imagewidth":192
                 },
              "49":
                 {
-                 "image":"torch.png"
+                 "image":"torch.png",
+                 "imageheight":96,
+                 "imagewidth":96
                 },
              "5":
                 {
-                 "image":"castleWall.png"
+                 "image":"castleWall.png",
+                 "imageheight":64,
+                 "imagewidth":64
                 },
              "50":
                 {
-                 "image":"trap.png"
+                 "image":"trap.png",
+                 "imageheight":32,
+                 "imagewidth":128
                 },
              "51":
                 {
-                 "image":"wallDecor1.png"
+                 "image":"wallDecor1.png",
+                 "imageheight":96,
+                 "imagewidth":128
                 },
              "52":
                 {
-                 "image":"wallDecor2.png"
+                 "image":"wallDecor2.png",
+                 "imageheight":96,
+                 "imagewidth":128
                 },
              "53":
                 {
-                 "image":"wallDecor3.png"
+                 "image":"wallDecor3.png",
+                 "imageheight":128,
+                 "imagewidth":160
                 },
              "54":
                 {
-                 "image":"window1.png"
+                 "image":"window1.png",
+                 "imageheight":64,
+                 "imagewidth":65
                 },
              "55":
                 {
-                 "image":"window2.png"
+                 "image":"window2.png",
+                 "imageheight":64,
+                 "imagewidth":64
                 },
              "56":
                 {
-                 "image":"window3.png"
+                 "image":"window3.png",
+                 "imageheight":59,
+                 "imagewidth":56
                 },
              "57":
                 {
-                 "image":"backgroundArch.png"
+                 "image":"backgroundArch.png",
+                 "imageheight":115,
+                 "imagewidth":135
                 },
              "58":
                 {
-                 "image":"backgroundMountain.png"
+                 "image":"backgroundMountain.png",
+                 "imageheight":140,
+                 "imagewidth":380
                 },
              "59":
                 {
-                 "image":"backgroundTower.png"
+                 "image":"backgroundTower.png",
+                 "imageheight":332,
+                 "imagewidth":129
                 },
              "6":
                 {
-                 "image":"cloud.png"
+                 "image":"cloud.png",
+                 "imageheight":128,
+                 "imagewidth":384
                 },
              "60":
                 {
-                 "image":"backgroundTree.png"
+                 "image":"backgroundTree.png",
+                 "imageheight":177,
+                 "imagewidth":109
                 },
              "61":
                 {
-                 "image":"earthWall2.png"
+                 "image":"earthWall2.png",
+                 "imageheight":64,
+                 "imagewidth":64
                 },
              "62":
                 {
-                 "image":"skeleton.png"
+                 "image":"skeleton.png",
+                 "imageheight":160,
+                 "imagewidth":133
                 },
              "7":
                 {
-                 "image":"column1.png"
+                 "image":"column1.png",
+                 "imageheight":192,
+                 "imagewidth":128
                 },
              "8":
                 {
-                 "image":"column2.png"
+                 "image":"column2.png",
+                 "imageheight":192,
+                 "imagewidth":128
                 },
              "9":
                 {
-                 "image":"doorBlueStroked.png"
+                 "image":"doorBlueStroked.png",
+                 "imageheight":192,
+                 "imagewidth":160
                 }
             },
          "tilewidth":384
         }],
  "tilewidth":32,
+ "type":"map",
  "version":1,
  "width":79
 }
