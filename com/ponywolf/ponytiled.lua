@@ -159,7 +159,7 @@ function M.new(data, dir)
             local image = sheet and display.newImage(objectGroup, sheet, gid, 0, 0) or display.newImage(objectGroup, gid, 0, 0)
             image.anchorX, image.anchorY = 0,1
             image.gid = tileNumber
-            image.x, image.y = (tx-1) * data.tilewidth, (ty+1) * data.tileheight
+            image.x, image.y = tx * data.tilewidth, (ty+1) * data.tileheight
             centerAnchor(image)
             -- flip it
             if flip.xy then
