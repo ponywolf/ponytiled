@@ -13,6 +13,8 @@ In 350 lines of code, **ponytiled** loads a sub-set of Tiled layers, tilesets an
 - [x] Particle plugin
 - [x] Rectangle shape with fillColor and strokeColor support
 - [x] Polygon import with physics support for edge chains
+- [x] Support for tilesheet based external tilesets (TSX files)
+- [ ] No support for collection of images external tilesets (TSX files)
 
 ### Quick Start Guide
 
@@ -95,4 +97,11 @@ The most exciting part of working in Tiled & Corona is the idea of custom proper
 #### bodyType
 
 One special custom property is *bodyType*. This triggers **ponytiled** to add a physics body to an object and pass the rest of the custom properties as physics options. Rectangle bodies are currently supported by default, adding a **radius** property will give you a round body.
+
+### Watchouts
+
+* Only the most basic support for TSX files (also known as external tilesets), that means only tilesheet style for now
+* Only supports XML or CSV layer data types
+
+![Setting up a CSV layer type](https://imgur.com/w2SImSf)
 
