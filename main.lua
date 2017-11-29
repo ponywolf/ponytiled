@@ -24,8 +24,16 @@ physics.start()
 -- Demo 2 
 
 -- Load an object based map from a JSON file
-local mapData = json.decodeFile(system.pathForFile("maps/objects/sandbox.json", system.ResourceDirectory))  -- load from json export
-local map = tiled.new(mapData, "maps/objects")
+--local mapData = json.decodeFile(system.pathForFile("maps/objects/sandbox.json", system.ResourceDirectory))  -- load from json export
+--local map = tiled.new(mapData, "maps/objects")
+
+-- Demo 3
+
+-- Load a "pixel perfect" map from a JSON export w/ External tileset
+display.setDefault("magTextureFilter", "nearest")
+display.setDefault("minTextureFilter", "nearest")
+local mapData = json.decodeFile(system.pathForFile("maps/external/outdoor.json", system.ResourceDirectory))  -- load from json export
+local map = tiled.new(mapData, "maps/external")
 
 -- center the map on screen
 map.x,map.y = display.contentCenterX - map.designedWidth/2, display.contentCenterY - map.designedHeight/2
