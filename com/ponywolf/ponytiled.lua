@@ -97,16 +97,16 @@ function M.new(data, dir)
 
   local function findLast(tileset)
     local last = tileset.firstgid
-    if tileset.tiles then 
+    if tileset.image then
+      return tileset.firstgid + tileset.tilecount - 1
+    elseif tileset.tiles then 
       for k,v in pairs(tileset.tiles) do
         if tonumber(k) + tileset.firstgid > last then
           last = tonumber(k) + tileset.firstgid
         end
       end
       return last
-    elseif tileset.image then
-      return tileset.firstgid + tileset.tilecount - 1
-    end
+    end  
   end
 
   local function gidLookup(gid)
