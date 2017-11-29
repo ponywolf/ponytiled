@@ -103,5 +103,5 @@ One special custom property is *bodyType*. This triggers **ponytiled** to add a 
 * Only the most basic support for TSX files (also known as external tilesets), that means only tilesheet style for now
 * Only supports XML or CSV layer data types
 
-![Setting up a CSV layer type](https://imgur.com/w2SImSf)
+![Setting up a CSV layer type](http://imgur.com/w2SImSf)
 
