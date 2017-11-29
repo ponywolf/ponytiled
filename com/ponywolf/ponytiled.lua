@@ -105,7 +105,7 @@ function M.new(data, dir)
       end
       return last
     elseif tileset.image then
-      return tileset.firstgid + tileset.tilecount
+      return tileset.firstgid + tileset.tilecount - 1
     end
   end
 
