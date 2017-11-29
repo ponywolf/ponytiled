@@ -100,8 +100,9 @@ One special custom property is *bodyType*. This triggers **ponytiled** to add a 
 
 ### Watchouts
 
-* Only the most basic support for TSX files (also known as external tilesets), that means only tilesheet style for now
-* Only supports XML or CSV layer data types
+* Only the most basic support for TSX files (also known as external tilesets)
+* Ellipse types are rendered as circles
+* Only supports XML or CSV layer data types (see below)
 
 ![Setting up a CSV layer type](https://i.imgur.com/w2SImSf.png)
 
