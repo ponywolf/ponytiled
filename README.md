@@ -3,7 +3,7 @@
 
 ![Screenshot of ponytiled in action](http://i.imgur.com/HJQJTiw.png)
 
-In 350 lines of code, **ponytiled** loads a sub-set of Tiled layers, tilesets and image collections. Built in plugin hooks and extensions make it easy to add support for many custom object types.
+In about 430 lines of code, **ponytiled** loads a sub-set of Tiled layers, tilesets and image collections. Built in plugin hooks and extensions make it easy to add support for many custom object types.
 
 - [x] Loads .LUA + .JSON exports from www.mapeditor.org
 - [x] Adds basic properties from tiled including physics
