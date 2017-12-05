@@ -147,7 +147,7 @@ function M.new(data, dir)
           return gid - firstgid + 1, flip, sheets[i]
         else -- collection of images
           for k,v in pairs(tileset.tiles) do
-            if tonumber(k) == (gid - firstgid + 0 ) then
+            if tonumber(k) == (gid - firstgid + (data.luaversion and 1 or 0)) then
               return v.image, flip -- may need updating with documents directory
             end
           end
