@@ -103,7 +103,7 @@ function M.new(data, dir)
     if tileset.image then
       return tileset.firstgid + tileset.tilecount - 1
     elseif tileset.tiles then 
-      for k,v in pairs(tileset.tiles) do
+      for k,_ in pairs(tileset.tiles) do
         if tonumber(k) + tileset.firstgid > last then
           last = tonumber(k) + tileset.firstgid
         end
@@ -381,6 +381,23 @@ function M.new(data, dir)
     local objx, objy = obj:localToContent(0,0)
     objx, objy = centerX - objx, centerY - objy
     self.x, self.y = self.x + objx, self.y + objy
+  end
+  
+  -- Make sure map stays on screen
+  function map:boundsCheck(border)
+    border = border or 0
+    local xMax, yMax = self.designedWidth * self.xScale, self.designedHeight * self.yScale
+    local minX = xMax - display.contentWidth + display.screenOriginX - border
+    local minY = yMax - display.contentHeight + display.screenOriginY - border
+    if self.x < -minX then self.x = -minX end
+    if self.y < -minY then self.y = -minY end  
+    local maxX = display.screenOriginX + border
+    local maxY = display.screenOriginY + border
+    if self.x > maxX then self.x = maxX end
+    if self.y > maxY then self.y = maxY end
+    -- smaller than the screen
+    if xMax < display.actualContentWidth then self.x = display.contentCenterX end
+    if yMax < display.actualContentHeight then self.y = display.contentCenterY end    
   end
 
   local function rightToLeft(a,b)
