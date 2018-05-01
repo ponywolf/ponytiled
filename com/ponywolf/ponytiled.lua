@@ -3,6 +3,7 @@
 -- Loads LUA saved map files from Tiled http://www.mapeditor.org/
 
 local physics = require "physics"
+--local path = require "com.luapower.path"
 local xml = require("com.coronalabs.xml").newParser()
 local json = require "json"
 
@@ -44,11 +45,11 @@ local function decodeTiledColor(hex)
   return r,g,b,a
 end
 
-local function unpackPoints(points)
+local function unpackPoints(points, dx, dy)
   local t = {}
   for i = 1,#points do
-    t[#t+1] = points[i].x
-    t[#t+1] = points[i].y
+    t[#t+1] = points[i].x + (dx or 0)
+    t[#t+1] = points[i].y + (dy or 0)
   end
   return t
 end
@@ -196,11 +197,18 @@ function M.new(data, dir)
         if object.gid then
           local gid, flip, sheet = gidLookup(object.gid)
           if gid then
-            local image = sheet and display.newImageRect(objectGroup, sheet, gid, object.width, object.height) or
-            display.newImageRect(objectGroup, dir .. gid, object.width, object.height)
+            local image
+            image = sheet and display.newImageRect(objectGroup, sheet, gid, object.width, object.height) or
+            display.newImageRect(objectGroup, path and path.normalize(dir .. gid) or (dir .. gid), object.width, object.height)
+            -- missing
+            if not image then -- placeholder
+              image = display.newRect(objectGroup, 0,0, object.width, object.height) 
+              image:setFillColor(1,0,0,0.5)
+            end
             -- name and type
             image.name = object.name
-            image.type = object.type        
+            image.type = object.type
+            image.filename = sheet and "none" or (dir .. gid)
             -- apply base properties
             image.anchorX, image.anchorY = 0, 1
             image.x, image.y = object.x, object.y
@@ -215,17 +223,17 @@ function M.new(data, dir)
               if flip.x then image.xScale = -1 end
               if flip.y then image.yScale = -1 end
             end          
-            -- simple physics
+            -- not so simple physics
             if object.properties.bodyType then
               physics.addBody(image, object.properties.bodyType, object.properties)
-            end          
+            end
             -- apply custom properties
             image = inherit(image, layer.properties)            
             image = inherit(image, object.properties)
           end
         elseif object.polygon or object.polyline then -- Polygon/line
           local points = object.polygon or object.polyline
-          local polygon
+          local polygon, originX, originY
           if object.polygon then 
             local xMax, xMin, yMax, yMin = -4294967296, 4294967296, -4294967296, 4294967296 -- 32 ^ 2 a large number             
             for p = 1, #points do
@@ -234,12 +242,12 @@ function M.new(data, dir)
               if points[p].x > xMax then xMax = points[p].x end               
               if points[p].y > yMax then yMax = points[p].y end   
             end
-            local centerX, centerY = (xMax + xMin) / 2, (yMax + yMin) / 2  
+            originX, originY = (xMax + xMin) / 2, (yMax + yMin) / 2  
             polygon = display.newPolygon(objectGroup, object.x, object.y, unpackPoints(points))
-            polygon:translate(centerX, centerY)
+            polygon:translate(originX, originY)
           else
             polygon = display.newLine( objectGroup, points[1].x, points[1].y, points[2].x, points[2].y)            
-            local originX, originY = points[1].x, points[1].y
+            originX, originY = points[1].x, points[1].y
             for p = 3, #points do
               polygon:append(points[p].x, points[p].y)
             end          
@@ -248,6 +256,12 @@ function M.new(data, dir)
           end
           -- simple physics
           if object.properties.bodyType then
+            if #points > 8 then 
+              object.properties.chain = unpackPoints(points, -originX, -originY)
+              object.properties.connectFirstAndLastChainVertex = object.polygon and true or false
+            else
+              object.properties.shape = unpackPoints(points, -originX, -originY)
+            end
             physics.addBody(polygon, object.properties.bodyType, object.properties)
           end  
           -- name and type
@@ -256,6 +270,7 @@ function M.new(data, dir)
           -- apply custom properties
           polygon = inherit(polygon, layer.properties)          
           polygon = inherit(polygon, object.properties)
+          polygon.rotation = object.rotation
           -- vector properties
           if polygon.fillColor then polygon:setFillColor(decodeTiledColor(polygon.fillColor)) end
           if polygon.strokeColor then polygon:setStrokeColor(decodeTiledColor(polygon.strokeColor)) end                       
@@ -313,14 +328,14 @@ function M.new(data, dir)
     -- each custom object above has its own ponywolf.plugin module
     for t = 1, #extensions do 
       -- load each module based on type
-      local plugin = require ((map.extensions or defaultExtensions) .. extensions[t])
+      local plugin = require ((self.extensions or defaultExtensions) .. extensions[t])
       -- find each type of tiled object
-      local images = map:listTypes(extensions[t])
+      local images = self:listTypes(extensions[t])
       if images then 
         -- do we have at least one?
         for i = 1, #images do
           -- extend the display object with its own custom code
-          images[i] = plugin.new(images[i])
+          images[i] = plugin.new(images[i], self)
         end
       end  
     end
@@ -372,8 +387,8 @@ function M.new(data, dir)
 
   function map:centerObject(obj)
     -- moves the world, so the specified object is on screen
-    if obj == nil then return false end
     obj = self:findObject(obj)
+    if not obj then return false end
 
     -- easiest way to scroll a map based on a character
     -- find the difference between the hero and the display center
@@ -382,8 +397,8 @@ function M.new(data, dir)
     objx, objy = centerX - objx, centerY - objy
     self.x, self.y = self.x + objx, self.y + objy
   end
-  
-  -- Make sure map stays on screen
+
+-- Make sure map stays on screen
   function map:boundsCheck(border)
     border = border or 0
     local xMax, yMax = self.designedWidth * self.xScale, self.designedHeight * self.yScale
@@ -427,13 +442,13 @@ function M.new(data, dir)
     end
   end
 
-  -- sort map by defaults
+-- sort map by defaults
   map:sort()
 
-  -- add helpful values to the map itself
+-- add helpful values to the map itself
   map.designedWidth, map.designedHeight = width, height
 
-  -- set the background color to the map background
+-- set the background color to the map background
   if data.backgroundcolor then
     if type(data.backgroundcolor) == "string" then
       display.setDefault("background", decodeTiledColor("FF" .. data.backgroundcolor))
