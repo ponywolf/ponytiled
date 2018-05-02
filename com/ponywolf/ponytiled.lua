@@ -223,6 +223,15 @@ function M.new(data, dir)
               if flip.x then image.xScale = -1 end
               if flip.y then image.yScale = -1 end
             end          
+            -- autotrace shape
+            local autoShape = object.properties.autoShape
+            if autoShape then
+              if not sheet then
+                object.properties.outline = graphics.newOutline( autoShape, path and path.normalize(dir .. gid) or (dir .. gid))
+              else
+                object.properties.outline = graphics.newOutline( autoShape, sheet, gid)
+              end
+            end            
             -- not so simple physics
             if object.properties.bodyType then
               physics.addBody(image, object.properties.bodyType, object.properties)
