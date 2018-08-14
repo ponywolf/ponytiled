@@ -233,8 +233,6 @@ function M.new(data, dir)
               end
             end            
             -- not so simple physics
-            if object.properties.bodyType or object.type == "physics" then
-              physics.addBody(image, object.properties.bodyType or "dynamic", object.properties)
             end
             -- apply custom properties
             image = inherit(image, layer.properties)            
@@ -264,14 +262,12 @@ function M.new(data, dir)
             polygon:translate(originX, originY)
           end
           -- simple physics
-          if object.properties.bodyType or object.type == "physics" then
             if #points > 8 then 
               object.properties.chain = unpackPoints(points, -originX, -originY)
               object.properties.connectFirstAndLastChainVertex = object.polygon and true or false
             else
               object.properties.shape = unpackPoints(points, -originX, -originY)
             end
-            physics.addBody(polygon, object.properties.bodyType or "dynamic", object.properties)
           end  
           -- name and type
           polygon.name = object.name
@@ -280,22 +276,16 @@ function M.new(data, dir)
           polygon = inherit(polygon, layer.properties)          
           polygon = inherit(polygon, object.properties)
           polygon.rotation = object.rotation
-          polygon.points = points
           -- vector properties
           if polygon.fillColor then polygon:setFillColor(decodeTiledColor(polygon.fillColor)) end
           if polygon.strokeColor then polygon:setStrokeColor(decodeTiledColor(polygon.strokeColor)) end                       
         elseif object.ellipse then -- circles
-          local radius = (object.width + object.height) * 0.25
-          local circle = display.newCircle(objectGroup, 0, 0, radius)          
           circle.anchorX, circle.anchorY = 0, 0
           circle.x, circle.y = object.x, object.y
           circle.rotation = object.rotation
           circle.isVisible = object.visible
           centerAnchor(circle)
           -- simple physics
-          if object.properties.bodyType or object.type == "physics" then
-            object.properties.radius = radius
-            physics.addBody(circle, object.properties.bodyType or "dynamic", object.properties)
           end 
           -- name and type
           circle.name = object.name
@@ -314,8 +304,6 @@ function M.new(data, dir)
           rect.isVisible = object.visible
           centerAnchor(rect)
           -- simple physics
-          if object.properties.bodyType or object.type == "physics" then
-            physics.addBody(rect, object.properties.bodyType or "dynamic", object.properties)
           end 
           -- name and type
           rect.name = object.name
