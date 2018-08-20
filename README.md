@@ -3,7 +3,7 @@
 
 ![Screenshot of ponytiled in action](http://i.imgur.com/HJQJTiw.png)
 
-In about 430 lines of code, **ponytiled** loads a sub-set of Tiled layers, tilesets and image collections. Built in plugin hooks and extensions make it easy to add support for many custom object types.
+In about 500 lines of code, **ponytiled** loads a sub-set of Tiled layers, tilesets and image collections. Built in plugin hooks and extensions make it easy to add support for many custom object types.
 
 - [x] Loads .LUA + .JSON exports from www.mapeditor.org
 - [x] Adds basic properties from tiled including physics
@@ -14,7 +14,9 @@ In about 430 lines of code, **ponytiled** loads a sub-set of Tiled layers, tiles
 - [x] Rectangle shape with fillColor and strokeColor support
 - [x] Polygon import with physics support for edge chains
 - [x] Support for tilesheet based external tilesets (TSX files)
-- [ ] No support for collection of images external tilesets (TSX files)
+- [x] Basic support for collection of images external tilesets (TSX files)
+- [x] Basic UI plugins for dragables, buttons and labels
+- [x] Particle plugin support for JSON particles http://particle2dx.com/
 
 ### Quick Start Guide
 
