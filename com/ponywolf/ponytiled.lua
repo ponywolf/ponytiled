@@ -3,7 +3,7 @@
 -- Loads LUA saved map files from Tiled http://www.mapeditor.org/
 
 local physics = require "physics"
---local path = require "com.luapower.path"
+--local path = require "com.luapower.path" --optional to resolve relative paths on android
 local xml = require("com.coronalabs.xml").newParser()
 local json = require "json"
 
@@ -25,13 +25,15 @@ local function inherit(image, properties)
   return image
 end
 
-local function centerAnchor(image)
+local function centerAnchor(image, anchorX, anchorY)
+  anchorX, anchorY = anchorX or 0.5, anchorY or 0.5
   if image.contentBounds then 
     local bounds = image.contentBounds
-    local actualCenterX, actualCenterY =  (bounds.xMin + bounds.xMax)/2 , (bounds.yMin + bounds.yMax)/2
-    image.anchorX, image.anchorY = 0.5, 0.5  
+    local actualCenterX, actualCenterY =  (bounds.xMin * anchorX) + (bounds.xMax * (1 - anchorX)), 
+    (bounds.yMin * (1 - anchorY)) + (bounds.yMax * anchorY)
     image.x = actualCenterX
     image.y = actualCenterY 
+    image.anchorX, image.anchorY = anchorX, anchorY      
   end
 end
 
@@ -71,7 +73,6 @@ function M.new(data, dir)
     local tsiw, tsih = tileset.imagewidth, tileset.imageheight
     local margin, spacing = tileset.margin or 0, tileset.spacing or 0
     local w, h = tileset.tilewidth, tileset.tileheight
-    local gid = 0
 
     local options = {
       frames = {},
@@ -91,8 +92,7 @@ function M.new(data, dir)
           width = w,
           height = h,
         }
-        gid = gid + 1
-        table.insert( frames, gid, element )
+        frames[#frames + 1] = element
       end
     end
     print ("LOADED:", dir .. tileset.image)
@@ -173,7 +173,7 @@ function M.new(data, dir)
           local tileNumber = layer.data[item] or 0
           local gid, flip, sheet = gidLookup(tileNumber)
           if gid then
-            local image = sheet and display.newImage(objectGroup, sheet, gid, 0, 0) or display.newImage(objectGroup, gid, 0, 0)
+            local image = sheet and display.newImage(objectGroup, sheet, gid, 0, 0) or display.newImage(objectGroup, dir .. gid, 0, 0)
             image.anchorX, image.anchorY = 0,1
             image.gid = tileNumber
             image.x, image.y = tx * data.tilewidth, (ty+1) * data.tileheight
@@ -210,12 +210,13 @@ function M.new(data, dir)
             image.type = object.type
             image.filename = sheet and "none" or (dir .. gid)
             -- apply base properties
+            local anchorX, anchorY = object.properties.anchorX, object.properties.anchorY
             image.anchorX, image.anchorY = 0, 1
             image.x, image.y = object.x, object.y
             image.rotation = object.rotation
             image.isVisible = object.visible
             image.gid = object.gid
-            centerAnchor(image)
+            centerAnchor(image, anchorX, anchorY)
             -- flip it
             if flip.xy then
               print("WARNING: Unsupported Tiled rotation x,y in ", object.name)
@@ -233,6 +234,8 @@ function M.new(data, dir)
               end
             end            
             -- not so simple physics
+            if object.properties.bodyType then
+              physics.addBody(image, object.properties.bodyType, object.properties)
             end
             -- apply custom properties
             image = inherit(image, layer.properties)            
@@ -262,12 +265,14 @@ function M.new(data, dir)
             polygon:translate(originX, originY)
           end
           -- simple physics
+          if object.properties.bodyType then
             if #points > 8 then 
               object.properties.chain = unpackPoints(points, -originX, -originY)
               object.properties.connectFirstAndLastChainVertex = object.polygon and true or false
             else
               object.properties.shape = unpackPoints(points, -originX, -originY)
             end
+            physics.addBody(polygon, object.properties.bodyType, object.properties)
           end  
           -- name and type
           polygon.name = object.name
@@ -280,12 +285,15 @@ function M.new(data, dir)
           if polygon.fillColor then polygon:setFillColor(decodeTiledColor(polygon.fillColor)) end
           if polygon.strokeColor then polygon:setStrokeColor(decodeTiledColor(polygon.strokeColor)) end                       
         elseif object.ellipse then -- circles
+          local circle = display.newCircle(objectGroup, 0, 0, (object.width + object.height) * 0.25)
           circle.anchorX, circle.anchorY = 0, 0
           circle.x, circle.y = object.x, object.y
           circle.rotation = object.rotation
           circle.isVisible = object.visible
           centerAnchor(circle)
           -- simple physics
+          if object.properties.bodyType then
+            physics.addBody(circle, object.properties.bodyType, object.properties)
           end 
           -- name and type
           circle.name = object.name
@@ -304,6 +312,8 @@ function M.new(data, dir)
           rect.isVisible = object.visible
           centerAnchor(rect)
           -- simple physics
+          if object.properties.bodyType then
+            physics.addBody(rect, object.properties.bodyType, object.properties)
           end 
           -- name and type
           rect.name = object.name
@@ -447,6 +457,29 @@ function M.new(data, dir)
           objects[i]:toBack()
         end      
       end      
+    end
+  end
+
+  function map:soloLayer(...)
+    if self.numChildren then
+      for i=1, self.numChildren do
+        self[i].wasVisible = self[i].isVisible
+        self[i].isVisible = false
+        for j = 1, #arg do 
+          if self[i].name == arg[j] then
+            self[i].isVisible = true
+          end
+        end
+      end
+    end
+    return false
+  end
+
+  function map:defaultLayers()
+    if self.numChildren then
+      for i=1, self.numChildren do
+        self[i].isVisible = (self[i].wasVisible == nil) and self[i].isVisible or self[i].wasVisible 
+      end
     end
   end
 
