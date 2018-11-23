@@ -18,6 +18,20 @@ local function hasbit(x, p) return x % (p + p) >= p end
 local function setbit(x, p) return hasbit(x, p) and x or x + p end
 local function clearbit(x, p) return hasbit(x, p) and x - p or x end
 
+
+local function tiledProperties(properties)
+  if (#properties > 0) and properties[1].name and properties[1].value then  
+    --new tiled style
+    local t = {}
+    for i = 1, #properties do
+      t[properties[i].name] = properties[i].value == "" and nil or properties[i].value
+    end
+    return t
+  else
+    return properties
+  end
+end
+
 local function inherit(image, properties)
   for k,v in pairs(properties) do
     image[k] = v == "" and nil or v
@@ -29,7 +43,7 @@ local function centerAnchor(image, anchorX, anchorY)
   anchorX, anchorY = anchorX or 0.5, anchorY or 0.5
   if image.contentBounds then 
     local bounds = image.contentBounds
-    local actualCenterX, actualCenterY =  (bounds.xMin * anchorX) + (bounds.xMax * (1 - anchorX)), 
+    local actualCenterX, actualCenterY =  (bounds.xMin * (1 - anchorX) + (bounds.xMax * anchorX)), 
     (bounds.yMin * (1 - anchorY)) + (bounds.yMax * anchorY)
     image.x = actualCenterX
     image.y = actualCenterY 
@@ -103,10 +117,11 @@ function M.new(data, dir)
     local last = tileset.firstgid
     if tileset.image then
       return tileset.firstgid + tileset.tilecount - 1
-    elseif tileset.tiles then 
-      for k,_ in pairs(tileset.tiles) do
-        if tonumber(k) + tileset.firstgid > last then
-          last = tonumber(k) + tileset.firstgid
+    elseif tileset.tiles then       
+      for k,v in pairs(tileset.tiles) do
+        local l = (v.id or tonumber(k)) + tileset.firstgid
+        if l > last then
+          last = l
         end
       end
       return last
@@ -140,6 +155,7 @@ function M.new(data, dir)
         tileset.source = nil -- no longer load the XML
       end
       local lastgid = findLast(tileset)
+
       if gid >= firstgid and gid <= lastgid then
         if tileset.image then -- spritesheet
           if not sheets[i] then 
@@ -147,14 +163,25 @@ function M.new(data, dir)
           end
           return gid - firstgid + 1, flip, sheets[i]
         else -- collection of images
-          for k,v in pairs(tileset.tiles) do
-            if tonumber(k) == (gid - firstgid + (data.luaversion and 1 or 0)) then
-              return v.image, flip -- may need updating with documents directory
+          if not tileset.tiles[1] then
+            for k,v in pairs(tileset.tiles) do
+              if tonumber(k) == (gid - firstgid + (data.luaversion and 1 or 0)) then
+                return v.image, flip -- may need updating with documents directory
+              end
+            end
+          end
+          
+          -- newer tiled format is found here
+          for t = 1, #tileset.tiles do
+            local tile = tileset.tiles[t]
+            if tonumber(tile.id) == gid - firstgid  + (data.luaversion and 1 or 0) then
+              return tile.image, flip -- may need updating with documents directory
             end
           end
         end
       end
     end
+
     return false
   end
 
@@ -194,6 +221,7 @@ function M.new(data, dir)
       for j = 1, #layer.objects do
         local object = layer.objects[j]
         object.properties = object.properties or {} -- make sure we have a properties table
+        object.properties = tiledProperties(object.properties)
         if object.gid then
           local gid, flip, sheet = gidLookup(object.gid)
           if gid then
@@ -205,6 +233,7 @@ function M.new(data, dir)
               image = display.newRect(objectGroup, 0,0, object.width, object.height) 
               image:setFillColor(1,0,0,0.5)
             end
+
             -- name and type
             image.name = object.name
             image.type = object.type
@@ -371,6 +400,7 @@ function M.new(data, dir)
     local objects = {}
     for layers = self.numChildren,1,-1 do
       local layer = self[layers]
+
       if layer.numChildren then
         for i = layer.numChildren,1,-1 do
           for j = 1, #arg do 
@@ -393,6 +423,18 @@ function M.new(data, dir)
       end
     end
     return false
+  end
+
+  function map:searchLayers(name)
+    local found = {}
+    if self.numChildren then
+      for layers=1, self.numChildren do
+        if self[layers].name:find(name) then -- search layers
+          found[#found+1] = self[layers]
+        end
+      end
+    end
+    return found 
   end
 
   function map:centerObject(obj)
