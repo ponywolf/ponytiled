@@ -24,7 +24,7 @@ local function tiledProperties(properties)
     --new tiled style
     local t = {}
     for i = 1, #properties do
-      t[properties[i].name] = properties[i].value == "" and nil or properties[i].value
+      if properties[i].value ~= "" then t[properties[i].name] = properties[i].value end
     end
     return t
   else
@@ -34,7 +34,7 @@ end
 
 local function inherit(image, properties)
   for k,v in pairs(properties) do
-    image[k] = v == "" and nil or v
+    if v ~= "" then image[k] = v end
   end
   return image
 end
