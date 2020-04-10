@@ -4,6 +4,7 @@
 
 local physics = require "physics"
 --local path = require "com.luapower.path" --optional to resolve relative paths on android
+--local translate = require "com.ponywolf.translator" 
 local xml = require("com.coronalabs.xml").newParser()
 local json = require "json"
 
@@ -18,12 +19,18 @@ local function hasbit(x, p) return x % (p + p) >= p end
 local function setbit(x, p) return hasbit(x, p) and x or x + p end
 local function clearbit(x, p) return hasbit(x, p) and x - p or x end
 
-
 local function tiledProperties(properties)
   if (#properties > 0) and properties[1].name and properties[1].value then  
     --new tiled style
     local t = {}
     for i = 1, #properties do
+      if translate then
+        if properties[i].type == "string" and (properties[i].name == "text") and (not tonumber(properties[i].value)) then
+          if translate then 
+            properties[i].value = translate(properties[i].value)
+          end
+        end
+      end
       if properties[i].value ~= "" then t[properties[i].name] = properties[i].value end
     end
     return t
@@ -31,6 +38,7 @@ local function tiledProperties(properties)
     return properties
   end
 end
+
 
 local function inherit(image, properties)
   for k,v in pairs(properties) do
@@ -109,7 +117,7 @@ function M.new(data, dir)
         frames[#frames + 1] = element
       end
     end
-    print ("LOADED:", dir .. tileset.image)
+    --print("LOADED:", dir .. tileset.image)
     return graphics.newImageSheet(dir .. tileset.image, options )
   end
 
@@ -158,10 +166,27 @@ function M.new(data, dir)
 
       if gid >= firstgid and gid <= lastgid then
         if tileset.image then -- spritesheet
+          local sequenceData
           if not sheets[i] then 
             sheets[i] = loadTileset(i)
           end
-          return gid - firstgid + 1, flip, sheets[i]
+          if tileset.tiles then 
+            for t = 1, #tileset.tiles do
+              local tile = tileset.tiles[t]
+              if tile.animation and tile.id == (gid - firstgid + (data.luaversion and 1 or 0)) then 
+                sequenceData = {
+                  name="imported",
+                  frames= { },
+                  time = 0,
+                }
+                for frame=1, #tile.animation do
+                  table.insert(sequenceData.frames, tile.animation[frame].tileid + 1)
+                  sequenceData.time = sequenceData.time + tile.animation[frame].duration -- Corona wants the total time, not the frame time
+                end
+              end
+            end
+          end
+          return gid - firstgid + 1, flip, sheets[i], sequenceData
         else -- collection of images
           if not tileset.tiles[1] then
             for k,v in pairs(tileset.tiles) do
@@ -170,7 +195,6 @@ function M.new(data, dir)
               end
             end
           end
-          
           -- newer tiled format is found here
           for t = 1, #tileset.tiles do
             local tile = tileset.tiles[t]
@@ -181,7 +205,6 @@ function M.new(data, dir)
         end
       end
     end
-
     return false
   end
 
@@ -198,9 +221,16 @@ function M.new(data, dir)
         for tx=0, data.width-1 do
           item = 1 + (ty * data.width) + tx
           local tileNumber = layer.data[item] or 0
-          local gid, flip, sheet = gidLookup(tileNumber)
+          local gid, flip, sheet, animation = gidLookup(tileNumber)
           if gid then
-            local image = sheet and display.newImage(objectGroup, sheet, gid, 0, 0) or display.newImage(objectGroup, dir .. gid, 0, 0)
+            local image
+            if animation then
+              --print("Animating:", gid)
+              image = display.newSprite(objectGroup, sheet, animation )
+              image:play("imported")
+            else
+              image = sheet and display.newImage(objectGroup, sheet, gid, 0, 0) or display.newImage(objectGroup, dir .. gid, 0, 0)
+            end
             image.anchorX, image.anchorY = 0,1
             image.gid = tileNumber
             image.x, image.y = tx * data.tilewidth, (ty+1) * data.tileheight
@@ -223,29 +253,36 @@ function M.new(data, dir)
         object.properties = object.properties or {} -- make sure we have a properties table
         object.properties = tiledProperties(object.properties)
         if object.gid then
-          local gid, flip, sheet = gidLookup(object.gid)
+          local gid, flip, sheet, animation = gidLookup(object.gid)
           if gid then
             local image
-            image = sheet and display.newImageRect(objectGroup, sheet, gid, object.width, object.height) or
-            display.newImageRect(objectGroup, path and path.normalize(dir .. gid) or (dir .. gid), object.width, object.height)
+            if animation then
+              --print("Animating:", gid)
+              image = display.newSprite(objectGroup, sheet, animation )
+              image:play("imported")
+            else
+              image = sheet and display.newImageRect(objectGroup, sheet, gid, object.width, object.height) or
+              display.newImageRect(objectGroup, path and path.normalize(dir .. gid) or (dir .. gid), object.width, object.height)
+            end
             -- missing
             if not image then -- placeholder
               image = display.newRect(objectGroup, 0,0, object.width, object.height) 
               image:setFillColor(1,0,0,0.5)
             end
-
             -- name and type
             image.name = object.name
             image.type = object.type
             image.filename = sheet and "none" or (dir .. gid)
             -- apply base properties
             local anchorX, anchorY = object.properties.anchorX, object.properties.anchorY
+            object.properties.anchorX, object.properties.anchorY = nil, nil
             image.anchorX, image.anchorY = 0, 1
             image.x, image.y = object.x, object.y
             image.rotation = object.rotation
             image.isVisible = object.visible
             image.gid = object.gid
             centerAnchor(image, anchorX, anchorY)
+            if image.fillColor then polygon:setFillColor(decodeTiledColor(image.fillColor)) end            
             -- flip it
             if flip.xy then
               print("WARNING: Unsupported Tiled rotation x,y in ", object.name)
@@ -263,7 +300,15 @@ function M.new(data, dir)
               end
             end            
             -- not so simple physics
-            if object.properties.bodyType then
+            if object.properties.bodyType or layer.properties.bodyType then
+              if object.properties.isBox then 
+                object.properties.box = { 
+                  halfWidth = (object.properties.boxWidth or 0.5) * image.width,
+                  halfHeight = (object.properties.boxHeight or 0.5) * image.height,
+                  x = object.properties.boxX or 0,
+                  y = object.properties.boxY or 0, 
+                  angle= object.properties.boxAngle or 0 }
+              end
               physics.addBody(image, object.properties.bodyType, object.properties)
             end
             -- apply custom properties
@@ -295,7 +340,7 @@ function M.new(data, dir)
           end
           -- simple physics
           if object.properties.bodyType then
-            if #points > 8 then 
+            if true then -- always make chains 
               object.properties.chain = unpackPoints(points, -originX, -originY)
               object.properties.connectFirstAndLastChainVertex = object.polygon and true or false
             else
@@ -374,20 +419,27 @@ function M.new(data, dir)
         -- do we have at least one?
         for i = 1, #images do
           -- extend the display object with its own custom code
-          images[i] = plugin.new(images[i], self)
+          images[i] = plugin.new(images[i])
         end
       end  
     end
   end
 
 -- return first display object with name
-  function map:findObject(name)
+  function map:findObject(name, type)
+    if not self.numChildren then return false end
     for layers = self.numChildren,1,-1 do
       local layer = self[layers]
       if layer.numChildren then
         for i = layer.numChildren,1,-1 do
           if layer[i].name == name then
-            return layer[i]
+            if type then 
+              if layer[i].type == type then 
+                return layer[i]
+              end
+            else
+              return layer[i]
+            end
           end
         end
       end
@@ -395,12 +447,29 @@ function M.new(data, dir)
     return false
   end
 
+-- return all display objects with names
+  function map:findObjects(...)
+    local objects = {}
+    for layers = self.numChildren,1,-1 do
+      local layer = self[layers]
+      if layer.numChildren then
+        for i = layer.numChildren,1,-1 do
+          for j = 1, #arg do 
+            if arg[j]==nil or layer[i].name == arg[j] then
+              objects[#objects+1] = layer[i]
+            end
+          end
+        end
+      end
+    end
+    return objects
+  end
+
 -- return all display objects with type
   function map:listTypes(...)
     local objects = {}
     for layers = self.numChildren,1,-1 do
       local layer = self[layers]
-
       if layer.numChildren then
         for i = layer.numChildren,1,-1 do
           for j = 1, #arg do 
@@ -437,7 +506,7 @@ function M.new(data, dir)
     return found 
   end
 
-  function map:centerObject(obj)
+  function map:centerObject(obj, tween)
     -- moves the world, so the specified object is on screen
     obj = self:findObject(obj)
     if not obj then return false end
@@ -446,8 +515,12 @@ function M.new(data, dir)
     -- find the difference between the hero and the display center
     -- and move the world to compensate
     local objx, objy = obj:localToContent(0,0)
-    objx, objy = centerX - objx, centerY - objy
-    self.x, self.y = self.x + objx, self.y + objy
+    objx, objy = centerX - objx , centerY - objy
+    if tween then
+      self.x, self.y = self.x + objx/4, self.y + objy/4
+    else
+      self.x, self.y = self.x + objx, self.y + objy
+    end
   end
 
   function map:centerAnchor()
@@ -456,18 +529,19 @@ function M.new(data, dir)
         map[layer][object]:translate(-width/2, -height/2)
       end
     end
+    map.anchorX, map.anchorX = 0.5, 0.5
   end
 
 -- Make sure map stays on screen
   function map:boundsCheck(border)
     border = border or 0
-    local xMax, yMax = self.designedWidth * self.xScale, self.designedHeight * self.yScale
-    local minX = xMax - display.contentWidth + display.screenOriginX - border
-    local minY = yMax - display.contentHeight + display.screenOriginY - border
+    local xMax, yMax = width * self.xScale, height * self.yScale
+    local minX = xMax /2 - display.contentWidth + display.screenOriginX - border
+    local minY = yMax /2 - display.contentHeight + display.screenOriginY - border
     if self.x < -minX then self.x = -minX end
     if self.y < -minY then self.y = -minY end  
-    local maxX = display.screenOriginX + border
-    local maxY = display.screenOriginY + border
+    local maxX = xMax /2 + display.screenOriginX + border
+    local maxY = yMax /2 + display.screenOriginY + border
     if self.x > maxX then self.x = maxX end
     if self.y > maxY then self.y = maxY end
     -- smaller than the screen
@@ -479,20 +553,30 @@ function M.new(data, dir)
     return (a.x or 0) + (a.width or 0) * 0.5 > (b.x or 0) + (b.width or 0) * 0.5
   end
 
+  local function leftToRight(a,b)
+    return (a.x or 0) + (a.width or 0) * 0.5 < (b.x or 0) + (b.width or 0) * 0.5
+  end
+
   local function upToDown(a,b)
     return (a.y or 0) + (a.height or 0) * 0.5 < (b.y or 0) + (b.height or 0) * 0.5 
   end
 
-  function map:sort()
+  local function downToUp(a,b)
+    return (a.y or 0) + (a.height or 0) * 0.5 > (b.y or 0) + (b.height or 0) * 0.5 
+  end
+
+  function map:sort(reverse)
     for layer = 1, self.numChildren do
       local objects = {}    
       local layerToSort = self[layer] or {}
       if layerToSort.numChildren then 
         for i = 1, layerToSort.numChildren do
-          objects[#objects+1] = layerToSort[i]
+          if not layerToSort[i].strokeWidth then
+            objects[#objects+1] = layerToSort[i]
+          end
         end
-        table.sort(objects, rightToLeft)  
-        table.sort(objects, upToDown)      
+        table.sort(objects, reverse and leftToRight or rightToLeft)  
+        table.sort(objects, reverse and downToUp or upToDown)      
       end
       for i = #objects, 1, -1 do
         if objects[i].toBack then
@@ -501,6 +585,50 @@ function M.new(data, dir)
       end      
     end
   end
+
+  function map:sortLayer(layer,reverse)
+    local objects = {}    
+    local layerToSort = map:findLayer(layer) or {}
+    if layerToSort.numChildren then 
+      for i = 1, layerToSort.numChildren do
+        objects[#objects+1] = layerToSort[i]
+      end
+      table.sort(objects, reverse and leftToRight or rightToLeft)  
+      table.sort(objects, reverse and downToUp or upToDown)      
+    end
+    for i = #objects, 1, -1 do
+      if objects[i].toBack then
+        objects[i]:toBack()
+      end      
+    end      
+  end
+
+  function map:showLayer(...)
+    if self.numChildren then
+      for i=1, self.numChildren do
+        for j = 1, #arg do 
+          if (self[i].name == arg[j]) or (arg[j] == "*") then
+            self[i].isVisible = true
+          end
+        end
+      end
+    end
+    return false
+  end
+
+  function map:hideLayer(...)
+    if self.numChildren then
+      for i=1, self.numChildren do
+        for j = 1, #arg do 
+          if (self[i].name == arg[j]) or (arg[j] == "*") then
+            self[i].isVisible = false
+          end
+        end
+      end
+    end
+    return false
+  end
+
 
   function map:soloLayer(...)
     if self.numChildren then
