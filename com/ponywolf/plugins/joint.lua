@@ -6,7 +6,7 @@ local M = {}
 function M.new(instance, map)
 
   if not instance then error("ERROR: Expected display object") end
-  print ("Found pivot: ",instance.name, " connects ", instance.bodyA,  "to", instance.bodyB)
+  print ("Found pivot: ",instance.name, " connects ", instance.bodyA, "to", instance.bodyB)
   local bodyA = map:findObject(instance.bodyA)
   local bodyB = map:findObject(instance.bodyB)
   local jointType = instance.jointType or "distance"

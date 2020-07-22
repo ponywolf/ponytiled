@@ -34,20 +34,22 @@ function M.new(instance)
 
   -- are we an image toggle?
   if instance.toggleImage then 
-    local map = parent.parent
-    if map.findObject then -- are we a tiled map
-      instance.toggleImage = map:findObject(instance.toggleImage)
-      if instance.toggleImage then -- are we an image
-        instance.toggleImage.x = instance.x
-        instance.toggleImage.y = instance.y
-        instance.toggleImage.isVisible = false
-        instance.isHitTestable = true
-        toggleImage = true
+    if not instance.toggleImage.translate then -- were an image, so we're good
+      local map = parent.parent
+      if map.findObject then -- are we a tiled map
+        instance.toggleImage = map:findObject(instance.toggleImage)
       end
+    end
+    if instance.toggleImage then -- are we an image
+      instance.toggleImage.x = instance.x
+      instance.toggleImage.y = instance.y
+      instance.toggleImage.isVisible = false
+      instance.isHitTestable = true
+      toggleImage = true
     end
   end
 
-  -- are we a text toggle?
+-- are we a text toggle?
   if instance.text then
     instance.keepInstance = true
     instance.label = label.new(instance)
@@ -59,7 +61,7 @@ function M.new(instance)
     end
   end
 
-  -- mouse down/over code here
+-- mouse down/over code here
   local function sizeButton(scale)
     if instance.label then
 --      instance.label.x, instance.label.y = instance.x, instance.y
@@ -68,7 +70,7 @@ function M.new(instance)
     instance.xScale, instance.yScale = instance._xScale * (scale or 1), instance._yScale * (scale or 1)
   end
 
-  -- are we a toggle and default
+-- are we a toggle and default
   function instance:getToggle()
     if toggleImage or toggleText then    
       if toggleText then 
@@ -81,7 +83,7 @@ function M.new(instance)
     end
   end
 
-  -- force a toggle state
+-- force a toggle state
   function instance:setToggle(default)
     if toggleImage or toggleText then
       if default == false then
@@ -107,7 +109,7 @@ function M.new(instance)
     end
   end
 
-  -- toggle a button state
+-- toggle a button state
   function instance:toggle()
     if toggleImage or toggleText then
       if toggleText then 
@@ -133,10 +135,10 @@ function M.new(instance)
     self:setFillColor(0)
   end
 
-  -- touch code
+-- touch code
   function instance:touch(event)
     local phase, name = event.phase, event.name
-    if self.enabled == false then return false end
+    if self.enabled == false then return true end
     -- press in animation
     if phase == "began" then
       if event.id then stage:setFocus(self) end
@@ -164,7 +166,7 @@ function M.new(instance)
     elseif (phase == "ended" or phase == "cancelled") and self.isFocus then
       if event.id then stage:setFocus(nil) end
       if inBounds(event, self) and not self.isCancelled then -- inside
-        local uiEvent = {name = "ui", phase = "released", target = self,  map = self.parent.parent, tag = self.tag, buttonName = self.name or "none"}
+        local uiEvent = {name = "ui", phase = "released", target = self, map = self.parent.parent, tag = self.tag, buttonName = self.name or "none"}
         uiEvent.toggled = self:toggle()
         Runtime:dispatchEvent(uiEvent)
       else -- outside
@@ -190,7 +192,7 @@ function M.new(instance)
     return true  
   end
 
-  -- for mouse interfaces only
+-- for mouse interfaces only
   local function mouseOver(event)
     instance:touch(event)
   end
@@ -203,7 +205,7 @@ function M.new(instance)
     Runtime:addEventListener("mouse", mouseOver)    
   end
 
-  -- add event
+-- add event
   instance:addEventListener('finalize')
   instance:addEventListener("touch")
 
