@@ -1,5 +1,5 @@
 # ponytiled
-*ponytiled* is a simple Tiled Map Loader for Corona SDK
+*ponytiled* is a simple Tiled Map Loader for Solar2D (formerly Corona SDK)
 
 ![Screenshot of ponytiled in action](http://i.imgur.com/HJQJTiw.png)
 
