@@ -1,4 +1,4 @@
--- Project: PonyTiled a Corona Tiled Map Loader
+-- Project: PonyTiled a Solar2D Tiled Map Loader (formerly Corona SDK)
 --
 -- Loads LUA saved map files from Tiled http://www.mapeditor.org/
 
@@ -131,6 +131,67 @@ function M.new(data, dir)
   local width, height = data.width * data.tilewidth, data.height * data.tileheight
   local sheets = {}
 
+  -- Check each tileset for its tiles definition table and copy
+  -- every tile's properties to their own table for later lookup.
+  local _tileData = {}
+
+  for i = 1, #tilesets do
+    if type( tilesets[i].tiles ) == "table" then
+      local firstgid = tilesets[i].firstgid
+
+      for _, t in pairs( tilesets[i].tiles ) do
+        local n = t.id+firstgid
+        _tileData[n] = {}
+
+        if t.properties then
+          for j = 1, #t.properties do
+            local t = t.properties[j]
+            _tileData[n][t.name] = t.value
+          end
+        end
+      end
+    end
+  end
+
+  -- List of tiles in the current map.
+  local _levelTiles = {}
+
+  -- Reserved tile property names for physics bodies.
+  local physicsProperties = {
+    density = true,
+    friction = true,
+    bounce = true,
+    bodyType = true,
+    radius = true,
+    shape = true,
+    box = true,
+    chain = true,
+    connectFirstAndLastChainVertex  = true,
+    outline = true,
+    isSensor = true,
+  }
+
+  -- Check if a tile has the given property and return the first tile with a matching value.
+  function map.getFirstTile( property, value )
+    for i = 1, #_levelTiles do
+      local key = _levelTiles[i][property]
+      if key and key == value then
+        return _levelTiles[i]
+      end
+    end
+  end
+
+  function map.getAllTiles( property, value )
+    local t = {}
+    for i = 1, #_levelTiles do
+      local key = _levelTiles[i][property]
+      if key and key == value then
+        t[#t+1] = _levelTiles[i]
+      end
+    end
+    return t
+  end
+
   local function loadTileset(num)
     local tileset = tilesets[num]
 
@@ -227,7 +288,7 @@ function M.new(data, dir)
                 }
                 for frame=1, #tile.animation do
                   table.insert(sequenceData.frames, tile.animation[frame].tileid + 1)
-                  sequenceData.time = sequenceData.time + tile.animation[frame].duration -- Corona wants the total time, not the frame time
+                  sequenceData.time = sequenceData.time + tile.animation[frame].duration -- Solar2D wants the total time, not the frame time
                 end
               end
             end
@@ -281,6 +342,31 @@ function M.new(data, dir)
             image.gid = tileNumber
             image.x, image.y = tx * data.tilewidth, (ty+1) * data.tileheight
             centerAnchor(image)
+
+            -- Assign any properties set in Tiled to the actual tile object.
+            local data = _tileData[tileNumber]
+            if type( data ) == "table" then
+              local physicsData = {}
+
+              -- Separate physics properties from everything else.
+              for k, v in pairs( data ) do
+                if physicsProperties[k] then
+                  physicsData[k] = v
+                else
+                  image[k] = v
+                end
+              end
+              -- number of the tile in its image sheet.
+              image.tileNum = gid
+
+              if physicsData.bodyType then
+                physics.addBody( image, physicsData.bodyType, physicsData )
+              end
+            end
+
+            -- Add the tile to a table for later access.
+            _levelTiles[#_levelTiles+1] = image
+
             -- apply custom properties
             image = inherit(image, layer.properties)
             -- flip it
