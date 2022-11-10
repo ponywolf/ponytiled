@@ -6,10 +6,10 @@
 In about 675 lines of code, **ponytiled** loads a sub-set of Tiled layers, tilesets and image collections. Built in plugin hooks and extensions make it easy to add support for many custom object types.
 
 - [x] Loads .LUA + .JSON exports from www.mapeditor.org
-- [x] Adds basic properties from tiled including physics
+- [x] Adds basic properties from Tiled including physics
 - [x] Supports object layers and tile layers
 - [x] Supports collections of images and tileset images
-- [x] Supports object x/y flipping and re-centering of anchorX/anchorY for Corona
+- [x] Supports object x/y flipping and re-centering of anchorX/anchorY for Solar2D
 - [x] Particle plugin
 - [x] Rectangle shape with fillColor and strokeColor support
 - [x] Polygon import with physics support for edge chains
@@ -28,7 +28,7 @@ map = tiled.new( data, dir )
 
 #### data
 
-Data is a lua table that contains an export of the tiled map in either .lua or .json format. The easiest way to populate that table is to export a map from Tiled in .lua format and *require* it in your code.
+Data is a lua table that contains an export of the Tiled map in either .lua or .json format. The easiest way to populate that table is to export a map from Tiled in .lua format and *require* it in your code.
 
 ![Lua export via Tiled](http://imgur.com/NJZuTM8.png)
 
@@ -57,7 +57,7 @@ map.xScale = 2
 map.alpha = 0.5
 map:translate(-30,30)
 ```
-map.designedWidth and map.designedHeight are the width and height of you map as specified in tiled's new map options. map objects also have functions to make it easy to find image objects to manipulate them with code.
+map.designedWidth and map.designedHeight are the width and height of you map as specified in Tiled's new map options. map objects also have functions to make it easy to find image objects to manipulate them with code.
 
 #### map:findObject(name)
 This funtion will return the *first* display object with the name specified. Great for getting to the display object of a unique item in the map.
@@ -93,7 +93,7 @@ The *extend()* function attaches a lua code module to a *image object*. You can 
 
 ### Custom Properties
 
-The most exciting part of working in Tiled & Corona is the idea of custom properites. You can select any *image object* on any *object layer* in tiled and add any number of custom properties. **ponytiled** will apply those properties to the image object as it loads. This allows you to put physics properties, custom draw modes, user data, etc. on an in-game item via the editor.
+The most exciting part of working in Tiled & Solar2D is the idea of custom properites. You can select any *image object* or *tile object* on any *object layer* or *tile layer* in Tiled and add any number of custom properties. **ponytiled** will apply those properties to the image object as it loads. This allows you to put physics properties, custom draw modes, user data, etc. on an in-game item via the editor.
 
 ![Setting a bodyType object](http://imgur.com/u3Ee6dD.png)
 
