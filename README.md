@@ -84,6 +84,24 @@ To find a layer (which itself is a nested display group), use map:findLayer().
 myLayer = map:findLayer( "hud" )
 myLayer.alpha = 0.5
 ```
+#### map:getFirstTile( property [, value ] )
+This funtion will return the *first* tile-based display object with the specified property in the map. Great for getting to the display object of a unique tile in the map. Optionally, you can specify a value for the property. If the value is omitted, the function will return the first tile that has the specified property regardless of the value of the property.
+``` 
+finishTile = map:getFirstTile( "type", "finish" )
+transition.blink( finishTile, { time=1000 } )
+```
+#### map:getAllTiles( property [, value ] )
+Same functionality as with `map:getFirstTile( property [, value ] )` (see above), but this function will return a list of all tile-based display objects in the map with the specified property.
+```
+enemies = map:getAllTiles( "isEnemy" )
+for i = 1, #enemies do
+  print( "enemy #" .. i .. " = " .. tostring( enemies[i] ) )
+end
+```
+
+
+
+
 ### Extensions
 
 #### map:extend(types)
