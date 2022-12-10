@@ -175,7 +175,8 @@ function M.new(data, dir)
   function map.getFirstTile( property, value )
     for i = 1, #_levelTiles do
       local key = _levelTiles[i][property]
-      if key and key == value then
+      -- If the value isn't specified, then just return the first tile with the given property.
+      if key and (value == nil or value == key) then
         return _levelTiles[i]
       end
     end
@@ -185,7 +186,7 @@ function M.new(data, dir)
     local t = {}
     for i = 1, #_levelTiles do
       local key = _levelTiles[i][property]
-      if key and key == value then
+      if key and (value == nil or value == key) then
         t[#t+1] = _levelTiles[i]
       end
     end
