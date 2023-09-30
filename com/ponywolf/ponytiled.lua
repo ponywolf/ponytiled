@@ -20,10 +20,10 @@ local function setbit(x, p) return hasbit(x, p) and x or x + p end
 local function clearbit(x, p) return hasbit(x, p) and x - p or x end
 
 local function tiledProperties(properties)
-  if (#properties > 0) and properties[1].name and properties[1].value then
+  if (#properties > 0) then
     --new tiled style
     local t = {}
-    for i = 1, #properties do
+    for i = 1, #properties do     
       if translate then
         if properties[i].type == "string" and (properties[i].name == "text") and (not tonumber(properties[i].value)) then
           if translate then
@@ -31,6 +31,7 @@ local function tiledProperties(properties)
           end
         end
       end
+      
       if properties[i].value ~= "" then t[properties[i].name] = properties[i].value end
     end
     return t
