@@ -1,6 +1,6 @@
--- Project: PonyTiled a Solar2D Tiled Map Loader (formerly Corona SDK)
+-- Project: PonyTiled is a simple Tiled Map Loader for Solar2D (formerly Corona SDK)
 --
--- Loads LUA saved map files from Tiled http://www.mapeditor.org/
+-- Loads TMJ saved map files from Tiled http://www.mapeditor.org/
 
 local physics = require "physics"
 local xml = require("com.coronalabs.xml").newParser()
@@ -8,7 +8,7 @@ local xml = require("com.coronalabs.xml").newParser()
 --local translate = require "com.ponywolf.translator"
 --local json = require "json"
 
-local M = {}
+local M = {}F
 local defaultExtensions = "com.ponywolf.plugins."
 
 local FlippedHorizontallyFlag   = 0x80000000
@@ -25,7 +25,7 @@ local function tiledProperties(properties)
     local t = {}
     for i = 1, #properties do
       if translate then
-        if properties[i].type == "string" and (properties[i].name == "text") and (not tonumber(properties[i].value)) then
+        if properties[i].type == "string" and (properties[i].name == "text" or properties[i].name == "title") and (not tonumber(properties[i].value)) then
           if translate then
             properties[i].value = translate(properties[i].value)
           end
@@ -39,11 +39,11 @@ local function tiledProperties(properties)
   end
 end
 
-local function inherit(image, properties)
+local function inherit(item, properties)
   for k,v in pairs(properties) do
-    if v ~= "" then image[k] = v or image[k] end
+    if v ~= "" then item[k] = v end
   end
-  return image
+  return item
 end
 
 local function centerAnchor(image, anchorX, anchorY)
@@ -64,8 +64,8 @@ local function decodeTiledColor(hex)
   local function hexToFloat(part)
     return tonumber("0x".. part or "00") / 255
   end
-  local a, r, g, b =  hexToFloat(hex:sub(1,2)), hexToFloat(hex:sub(3,4)), hexToFloat(hex:sub(5,6)), hexToFloat(hex:sub(7,8))
-  return r, g, b, a
+  local a, r, g, b =  hexToFloat(hex:sub(1,2)), hexToFloat(hex:sub(3,4)), hexToFloat(hex:sub(5,6)) , hexToFloat(hex:sub(7,8))
+  return r,g,b,a
 end
 
 local function unpackPoints(points, dx, dy)
@@ -77,50 +77,7 @@ local function unpackPoints(points, dx, dy)
   return t
 end
 
-local width = display.actualContentWidth
-local height = display.actualContentHeight
-local originX = display.screenOriginX
-local originY = display.screenOriginY
-local centerX = display.contentCenterX
-local centerY = display.contentCenterY
-
-local safeOriginX = display.safeScreenOriginX
-local safeOriginY = display.safeScreenOriginY
-local safeWidth = display.safeActualContentWidth
-local safeHeight = display.safeActualContentHeight
-
-local function snap(map, object, alignment, margin, safe)
-  if not object or not object.x or not object.y then return nil end
-  local anchorX, anchorY = object.anchorX, object.anchorY
-
-  -- Let's do it!
-  alignment = string.lower(alignment or "center")
-  margin = margin or 0
-
-  local w = object.contentWidth
-  local h = object.contentHeight
-
-  local x, y = object:localToContent(0,0)
-
-  if string.find(alignment,"center") then
-    x, y = centerX, centerY
-  end
-  if string.find(alignment,"top") or string.find(alignment,"upper") then
-    y = (safe and safeOriginY or originY) + margin + (anchorY * h)
-  end
-  if string.find(alignment,"bottom") or string.find(alignment,"lower") then
-    y = (safe and safeHeight or height) - margin - (anchorY * h) + (safe and safeOriginY or originY)
-  end
-  if string.find(alignment,"left") then
-    x = (safe and safeOriginX or originX) + margin + (anchorX * w)
-  end
-  if string.find(alignment,"right") then
-    x = (safe and safeWidth or width) - margin - (anchorX * w) + (safe and safeOriginX or originX)
-  end
-
-  object.x, object.y = map:contentToLocal(x,y)
-  return object.x, object.y -- new x, y if you need it
-end
+local centerX, centerY = display.contentCenterX, display.contentCenterY
 
 function M.new(data, dir)
   local map = display.newGroup()
@@ -130,68 +87,6 @@ function M.new(data, dir)
   local tilesets = data.tilesets
   local width, height = data.width * data.tilewidth, data.height * data.tileheight
   local sheets = {}
-
-  -- Check each tileset for its tiles definition table and copy
-  -- every tile's properties to their own table for later lookup.
-  local _tileData = {}
-
-  for i = 1, #tilesets do
-    if type( tilesets[i].tiles ) == "table" then
-      local firstgid = tilesets[i].firstgid
-
-      for _, t in pairs( tilesets[i].tiles ) do
-        local n = t.id+firstgid
-        _tileData[n] = {}
-
-        if t.properties then
-          for j = 1, #t.properties do
-            local t = t.properties[j]
-            _tileData[n][t.name] = t.value
-          end
-        end
-      end
-    end
-  end
-
-  -- List of tiles in the current map.
-  local _levelTiles = {}
-
-  -- Reserved tile property names for physics bodies.
-  local physicsProperties = {
-    density = true,
-    friction = true,
-    bounce = true,
-    bodyType = true,
-    radius = true,
-    shape = true,
-    box = true,
-    chain = true,
-    connectFirstAndLastChainVertex  = true,
-    outline = true,
-    isSensor = true,
-  }
-
-  -- Check if a tile has the given property and return the first tile with a matching value.
-  function map.getFirstTile( property, value )
-    for i = 1, #_levelTiles do
-      local key = _levelTiles[i][property]
-      -- If the value isn't specified, then just return the first tile with the given property.
-      if key and (value == nil or value == key) then
-        return _levelTiles[i]
-      end
-    end
-  end
-
-  function map.getAllTiles( property, value )
-    local t = {}
-    for i = 1, #_levelTiles do
-      local key = _levelTiles[i][property]
-      if key and (value == nil or value == key) then
-        t[#t+1] = _levelTiles[i]
-      end
-    end
-    return t
-  end
 
   local function loadTileset(num)
     local tileset = tilesets[num]
@@ -222,8 +117,7 @@ function M.new(data, dir)
       end
     end
     --print("LOADED:", dir .. tileset.image)
-    local filename = path and path.normalize(dir .. tileset.image) or dir .. tileset.image
-    return graphics.newImageSheet(dir .. tileset.image, options)
+    return graphics.newImageSheet(dir .. tileset.image, options )
   end
 
   local function findLast(tileset)
@@ -278,14 +172,14 @@ function M.new(data, dir)
           if tileset.tiles then
             for t = 1, #tileset.tiles do
               local tile = tileset.tiles[t]
-              tile.properties = tiledProperties(tile.properties or {})
               if tile.animation and tile.id == (gid - firstgid + (data.luaversion and 1 or 0)) then
+                tile = inherit(tile, tiledProperties(tile.properties or {}))
                 sequenceData = {
                   name="imported",
-                  frames= {},
+                  frames= { },
                   time = 0,
-                  loopCount = tile.properties.loopCount or 0,
-                  loopDirection = tile.properties.loopDirection,
+                  loopCount = tile.loopCount or 0,
+                  loopDirection = tile.loopDirection,
                 }
                 for frame=1, #tile.animation do
                   table.insert(sequenceData.frames, tile.animation[frame].tileid + 1)
@@ -318,7 +212,7 @@ function M.new(data, dir)
 
   for i = 1, #layers do
     local layer = layers[i]
-    layer.properties = tiledProperties(layer.properties or {}) -- make sure we have a properties table
+    layer.properties = layer.properties or {} -- make sure we have a properties table
     local objectGroup = display.newGroup()
     if layer.type == "tilelayer" then
       if layer.compression or layer.encoding then
@@ -334,8 +228,8 @@ function M.new(data, dir)
             local image
             if animation then
               --print("Animating:", gid)
-              image = display.newSprite(objectGroup, sheet, animation)
-              image:play()
+              image = display.newSprite(objectGroup, sheet, animation )
+              image:play("imported")
             else
               image = sheet and display.newImage(objectGroup, sheet, gid, 0, 0) or display.newImage(objectGroup, dir .. gid, 0, 0)
             end
@@ -343,40 +237,15 @@ function M.new(data, dir)
             image.gid = tileNumber
             image.x, image.y = tx * data.tilewidth, (ty+1) * data.tileheight
             centerAnchor(image)
-
-            -- Assign any properties set in Tiled to the actual tile object.
-            local data = _tileData[tileNumber]
-            if type( data ) == "table" then
-              local physicsData = {}
-
-              -- Separate physics properties from everything else.
-              for k, v in pairs( data ) do
-                if physicsProperties[k] then
-                  physicsData[k] = v
-                else
-                  image[k] = v
-                end
-              end
-              -- number of the tile in its image sheet.
-              image.tileNum = gid
-
-              if physicsData.bodyType then
-                physics.addBody( image, physicsData.bodyType, physicsData )
-              end
-            end
-
-            -- Add the tile to a table for later access.
-            _levelTiles[#_levelTiles+1] = image
-
-            -- apply custom properties
-            image = inherit(image, layer.properties)
             -- flip it
             if flip.xy then
-              print("WARNING: Unsupported Tiled mirror x, y in tile ", tx,ty)
+              print("WARNING: Unsupported Tiled mirror x,y in tile ", tx,ty)
             else
-              if flip.x then image.xScale = -1 * image.xScale end
-              if flip.y then image.yScale = -1 * image.yScale end
+              if flip.x then image.xScale = -1 end
+              if flip.y then image.yScale = -1 end
             end
+            -- apply custom properties
+            image = inherit(image, layer.properties)
           end
         end
       end
@@ -391,10 +260,8 @@ function M.new(data, dir)
             local image
             if animation then
               --print("Animating:", gid)
-              image = display.newSprite(objectGroup, sheet, animation)
-              image:play()
-              image.xScale = object.width / image.width
-              image.yScale = object.height / image.height
+              image = display.newSprite(objectGroup, sheet, animation )
+              image:play("imported")
             else
               image = sheet and display.newImageRect(objectGroup, sheet, gid, object.width, object.height) or
               display.newImageRect(objectGroup, path and path.normalize(dir .. gid) or (dir .. gid), object.width, object.height)
@@ -407,8 +274,8 @@ function M.new(data, dir)
             -- name and type
             image.name = object.name
             image.type = object.type
-            image.id = object.id
             image.filename = sheet and "none" or (dir .. gid)
+            image.id = object.id
             -- apply base properties
             local anchorX, anchorY = object.properties.anchorX, object.properties.anchorY
             object.properties.anchorX, object.properties.anchorY = nil, nil
@@ -418,21 +285,21 @@ function M.new(data, dir)
             image.isVisible = object.visible
             image.gid = object.gid
             centerAnchor(image, anchorX, anchorY)
-            if image.fillColor then image:setFillColor(decodeTiledColor(image.fillColor)) end
+            if image.fillColor then polygon:setFillColor(decodeTiledColor(image.fillColor)) end
             -- flip it
             if flip.xy then
-              print("WARNING: Unsupported Tiled rotation x, y in ", object.name)
+              print("WARNING: Unsupported Tiled rotation x,y in ", object.name)
             else
-              if flip.x then image.xScale = -1 * image.xScale end
-              if flip.y then image.yScale = -1 * image.yScale end
+              if flip.x then image.xScale = -1 end
+              if flip.y then image.yScale = -1 end
             end
             -- autotrace shape
             local autoShape = object.properties.autoShape
             if autoShape then
               if not sheet then
-                object.properties.outline = graphics.newOutline(autoShape, path and path.normalize(dir .. gid) or (dir .. gid))
+                object.properties.outline = graphics.newOutline( autoShape, path and path.normalize(dir .. gid) or (dir .. gid))
               else
-                object.properties.outline = graphics.newOutline(autoShape, sheet, gid)
+                object.properties.outline = graphics.newOutline( autoShape, sheet, gid)
               end
             end
             -- not so simple physics
@@ -466,7 +333,7 @@ function M.new(data, dir)
             polygon = display.newPolygon(objectGroup, object.x, object.y, unpackPoints(points))
             polygon:translate(originX, originY)
           else
-            polygon = display.newLine(objectGroup, points[1].x, points[1].y, points[2].x, points[2].y)
+            polygon = display.newLine( objectGroup, points[1].x, points[1].y, points[2].x, points[2].y)
             originX, originY = points[1].x, points[1].y
             for p = 3, #points do
               polygon:append(points[p].x, points[p].y)
@@ -474,7 +341,6 @@ function M.new(data, dir)
             polygon.x,polygon.y = object.x, object.y
             polygon:translate(originX, originY)
           end
-          polygon.points = points
           -- simple physics
           if object.properties.bodyType then
             if true then -- always make chains
@@ -488,7 +354,6 @@ function M.new(data, dir)
           -- name and type
           polygon.name = object.name
           polygon.type = object.type
-          polygon.id = object.id
           -- apply custom properties
           polygon = inherit(polygon, layer.properties)
           polygon = inherit(polygon, object.properties)
@@ -510,13 +375,26 @@ function M.new(data, dir)
           -- name and type
           circle.name = object.name
           circle.type = object.type
-          circle.id = object.id
           -- apply custom properties
           circle = inherit(circle, layer.properties)
           circle = inherit(circle, object.properties)
           -- vector properties
           if circle.fillColor then circle:setFillColor(decodeTiledColor(circle.fillColor)) end
           if circle.strokeColor then circle:setStrokeColor(decodeTiledColor(circle.strokeColor)) end
+                elseif object.text then
+          -- need custom font, color, wrap,.. etc
+          local text = display.newText(objectGroup, object.text.text, object.x, object.y, native.systemFont, object.fontSize)
+          text.anchorX, text.anchorY = 0, 1
+          text.rotation = object.rotation
+          text.isVisible = object.visible
+          centerAnchor(text)
+          -- name and type
+          text.name = object.name
+          text.type = object.type or "text"
+          text.id = object.id
+          -- apply custom properties
+          text = inherit(text, layer.properties)
+          text = inherit(text, object.properties)
         else -- if all else fails make a simple rect
           local rect = display.newRect(objectGroup, 0, 0, object.width, object.height)
           rect.anchorX, rect.anchorY = 0, 0
@@ -531,7 +409,6 @@ function M.new(data, dir)
           -- name and type
           rect.name = object.name
           rect.type = object.type
-          rect.id = object.id
           -- apply custom properties
           rect = inherit(rect, layer.properties)
           rect = inherit(rect, object.properties)
@@ -657,7 +534,7 @@ function M.new(data, dir)
     local objx, objy = obj:localToContent(0,0)
     objx, objy = centerX - objx , centerY - objy
     if tween then
-      self.x, self.y = self.x + objx/8, self.y + objy/8
+      self.x, self.y = self.x + objx/4, self.y + objy/4
     else
       self.x, self.y = self.x + objx, self.y + objy
     end
@@ -713,9 +590,9 @@ function M.new(data, dir)
       local layerToSort = self[layer] or {}
       if layerToSort.numChildren then
         for i = 1, layerToSort.numChildren do
---          if not layerToSort[i].strokeWidth then
-          objects[#objects+1] = layerToSort[i]
---          end
+          if not layerToSort[i].strokeWidth then
+            objects[#objects+1] = layerToSort[i]
+          end
         end
         table.sort(objects, reverse and leftToRight or rightToLeft)
         table.sort(objects, reverse and downToUp or upToDown)
@@ -728,7 +605,7 @@ function M.new(data, dir)
     end
   end
 
-  function map:sortLayer(layer, reverse)
+  function map:sortLayer(layer,reverse)
     local objects = {}
     local layerToSort = map:findLayer(layer) or {}
     if layerToSort.numChildren then
@@ -790,57 +667,6 @@ function M.new(data, dir)
     if self.numChildren then
       for i=1, self.numChildren do
         self[i].isVisible = (self[i].wasVisible == nil) and self[i].isVisible or self[i].wasVisible
-      end
-    end
-  end
-
-  function map:pauseAnimations()
-    for i = self.numChildren,1,-1 do
-      local layers = self[i]
-      for j = 1, layers.numChildren do
-        if layers[j].play then
-          layers[j]:pause()
-        end
-      end
-    end
-  end
-  
-  function map:playAnimation(layer)
-    for i = self.numChildren,1,-1 do
-      local layers = self[i]
-      if layers.name:find(layer) then
-        for j = 1, layers.numChildren do
-          if layers[j].play then
-            layers[j]:play()
-          end
-        end
-      end
-    end
-  end  
-
-  function map:restartAnimation(layer)
-    for i = self.numChildren,1,-1 do
-      local layers = self[i]
-      if layers.name:find(layer) then
-        for j = 1, layers.numChildren do
-          if layers[j].play then
-            layers[j]:pause()
-            layers[j]:setFrame(1)
-            layers[j]:play()
-          end
-        end
-      end
-    end
-  end
-
-  function map:snap()
-    for i = self.numChildren,1,-1 do
-      local layers = self[i]
-      for j = 1, layers.numChildren do
-        if layers[j].snap then
-          print ("MAP: Snapping", layers[j].name)
-          snap(self, layers[j], layers[j].snap, layers[j].margin, layers[j].safe)
-        end
       end
     end
   end
