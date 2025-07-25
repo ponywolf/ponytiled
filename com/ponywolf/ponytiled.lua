@@ -61,6 +61,9 @@ end
 local function decodeTiledColor(hex)
   hex = hex or "#FF888888"
   hex = hex:gsub("#","")
+  if string.len(hex) < 8 then
+    hex = "FF"..hex
+  end
   local function hexToFloat(part)
     return tonumber("0x".. part or "00") / 255
   end
@@ -285,7 +288,7 @@ function M.new(data, dir)
             image.isVisible = object.visible
             image.gid = object.gid
             centerAnchor(image, anchorX, anchorY)
-            if image.fillColor then polygon:setFillColor(decodeTiledColor(image.fillColor)) end
+            if image.fillColor then image:setFillColor(decodeTiledColor(image.fillColor)) end
             -- flip it
             if flip.xy then
               print("WARNING: Unsupported Tiled rotation x,y in ", object.name)
@@ -381,10 +384,15 @@ function M.new(data, dir)
           -- vector properties
           if circle.fillColor then circle:setFillColor(decodeTiledColor(circle.fillColor)) end
           if circle.strokeColor then circle:setStrokeColor(decodeTiledColor(circle.strokeColor)) end
-                elseif object.text then
-          -- need custom font, color, wrap,.. etc
-          local text = display.newText(objectGroup, object.text.text, object.x, object.y, native.systemFont, object.fontSize)
-          text.anchorX, text.anchorY = 0, 1
+        elseif object.text then
+          -- TTF font loading
+          local font = object.TTF
+          local size = object.text.pixelsize
+          local color = object.text.color
+          local text = display.newText(objectGroup, object.text.text or " ", object.x, object.y, font or native.systemFont, size)
+          print ("color", color)
+          text:setFillColor(decodeTiledColor(color or "FFFFFF"))
+          text.anchorX, text.anchorY = 0.0, 0.0
           text.rotation = object.rotation
           text.isVisible = object.visible
           centerAnchor(text)
