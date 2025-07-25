@@ -8,7 +8,7 @@ local xml = require("com.coronalabs.xml").newParser()
 --local translate = require "com.ponywolf.translator"
 --local json = require "json"
 
-local M = {}F
+local M = {}
 local defaultExtensions = "com.ponywolf.plugins."
 
 local FlippedHorizontallyFlag   = 0x80000000
