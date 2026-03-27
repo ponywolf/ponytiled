@@ -98,6 +98,18 @@ for i = 1, #enemies do
   print( "enemy #" .. i .. " = " .. tostring( enemies[i] ) )
 end
 ```
+#### map:getLayerGrid( name )
+Returns a tile layer's data as a 2D table (`grid[row][col]`) containing raw GID values. Useful when a tile layer is used as a data grid for collisions, walkable areas, pathfinding, or similar logic rather than just visuals. For example, a "collision" layer where tile 1 means blocked and 0 means open.
+```
+local grid = map:getLayerGrid( "collision" )
+for row = 1, #grid do
+  for col = 1, #grid[row] do
+    if grid[row][col] > 0 then
+      print( "Blocked at row " .. row .. ", col " .. col )
+    end
+  end
+end
+```
 #### map:showLayer(name)
 Set a layer to visible
 #### map:hideLayer(name)

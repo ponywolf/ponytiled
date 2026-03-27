@@ -156,6 +156,9 @@ function M.new(data, dir)
   -- List of tiles in the current map.
   local _levelTiles = {}
 
+  -- Raw tile data per layer, copied for getLayerGrid.
+  local _layerData = {}
+
   -- Reserved tile property names for physics bodies.
   local physicsProperties = {
     density = true,
@@ -190,6 +193,21 @@ function M.new(data, dir)
       end
     end
     return t
+  end
+
+  -- Return tile layer data as grid[row][col] of raw GIDs.
+  function map:getLayerGrid( name )
+    local entry = _layerData[name]
+    if not entry then return nil end
+    local grid = {}
+    local w = entry.width
+    for row = 1, entry.height do
+      grid[row] = {}
+      for col = 1, w do
+        grid[row][col] = entry.data[(row - 1) * w + col] or 0
+      end
+    end
+    return grid
   end
 
   local function loadTileset(num)
@@ -354,6 +372,11 @@ function M.new(data, dir)
       if layer.compression or layer.encoding then
         print ("ERROR: Tile layer encoding/compression not supported. Choose CSV or XML in map options.")
       end
+      -- Copy raw tile data for getLayerGrid.
+      local layerCopy = {}
+      for t = 1, #layer.data do layerCopy[t] = layer.data[t] end
+      _layerData[layer.name] = { data = layerCopy, width = data.width, height = data.height }
+
       local item = 0
       for ty=0, data.height-1 do
         for tx=0, data.width-1 do
