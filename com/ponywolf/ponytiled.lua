@@ -1,10 +1,10 @@
--- Project: PonyTiled is a simple Tiled Map Loader for Solar2D (formerly Corona SDK)
---
--- Loads TMJ saved map files from Tiled http://www.mapeditor.org/
+-- PonyTiled is a simple Tiled Map Loader for Solar2D (formerly Corona SDK)
 
-local physics = require "physics"
+-- Tiled: http://www.mapeditor.org/
+
+local physics = require("physics")
 local xml = require("com.coronalabs.xml").newParser()
---local translate = require "com.ponywolf.translator"
+--local translate = require("com.ponywolf.translator")
 
 local M = {}
 local defaultExtensions = "com.ponywolf.plugins."
@@ -32,7 +32,7 @@ local function clearbit(x, p) return hasbit(x, p) and x - p or x end
 
 local function tiledProperties(properties)
   if (#properties > 0) and properties[1].name and properties[1].value ~= nil then
-    --new tiled style
+    -- new tiled style
     local t = {}
     for i = 1, #properties do
       if translate then
@@ -486,7 +486,7 @@ function M.new(data, dir)
           local points = object.polygon or object.polyline
           local polygon, originX, originY
           if object.polygon then
-            local xMax, xMin, yMax, yMin = -4294967296, 4294967296, -4294967296, 4294967296 -- 32 ^ 2 a large number
+            local xMax, xMin, yMax, yMin = -4294967296, 4294967296, -4294967296, 4294967296 -- 2^32 (a large number)
             for p = 1, #points do
               if points[p].x < xMin then xMin = points[p].x end
               if points[p].y < yMin then yMin = points[p].y end
@@ -597,7 +597,7 @@ function M.new(data, dir)
     -- each custom object above has its own ponywolf.plugin module
     for t = 1, #extensions do
       -- load each module based on type
-      local plugin = require ((self.extensions or defaultExtensions) .. extensions[t])
+      local plugin = require((self.extensions or defaultExtensions) .. extensions[t])
       -- find each type of tiled object
       local images = self:listTypes(extensions[t])
       if images then
@@ -610,7 +610,7 @@ function M.new(data, dir)
     end
   end
 
--- return first display object with name
+  -- return first display object with name
   function map:findObject(name, type)
     if not self.numChildren then return false end
     for layers = self.numChildren,1,-1 do
@@ -632,7 +632,7 @@ function M.new(data, dir)
     return false
   end
 
--- return all display objects with names
+  -- return all display objects with names
   function map:findObjects(...)
     local objects = {}
     for layers = self.numChildren,1,-1 do
@@ -650,7 +650,7 @@ function M.new(data, dir)
     return objects
   end
 
--- return all display objects with type
+  -- return all display objects with type
   function map:listTypes(...)
     local objects = {}
     for layers = self.numChildren,1,-1 do
@@ -717,7 +717,7 @@ function M.new(data, dir)
     map.anchorX, map.anchorY = 0.5, 0.5
   end
 
--- Make sure map stays on screen
+  -- Make sure map stays on screen
   function map:boundsCheck(border)
     if self.translate then
       border = border or 0
@@ -839,13 +839,13 @@ function M.new(data, dir)
     end
   end
 
--- sort map by defaults
+  -- sort map by defaults
   map:sort()
 
--- add helpful values to the map itself
+  -- add helpful values to the map itself
   map.designedWidth, map.designedHeight = width, height
 
--- set the background color to the map background
+  -- set the background color to the map background
   if data.backgroundcolor then
     if type(data.backgroundcolor) == "string" then
       display.setDefault("background", decodeTiledColor("FF" .. data.backgroundcolor))
