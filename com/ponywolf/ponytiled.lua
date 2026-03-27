@@ -546,7 +546,7 @@ function M.new(data, dir)
           if circle.strokeColor then circle:setStrokeColor(decodeTiledColor(circle.strokeColor)) end
         elseif object.text then
           -- TTF font loading
-          local font = object.properties.TTF
+          local font = object.properties.TTF and normalizePath( dir .. object.properties.TTF )
           local size = object.text.pixelsize
           local color = object.text.color
           local text = display.newText(objectGroup, object.text.text or " ", object.x, object.y, font or native.systemFont, size)
