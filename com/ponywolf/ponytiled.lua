@@ -74,7 +74,7 @@ local function decodeTiledColor(hex)
     hex = "FF"..hex
   end
   local function hexToFloat(part)
-    return tonumber("0x".. part or "00") / 255
+    return tonumber("0x" .. (part or "00")) / 255
   end
   local a, r, g, b =  hexToFloat(hex:sub(1,2)), hexToFloat(hex:sub(3,4)), hexToFloat(hex:sub(5,6)), hexToFloat(hex:sub(7,8))
   return r, g, b, a
@@ -139,13 +139,13 @@ function M.new(data, dir)
     if type( tilesets[i].tiles ) == "table" then
       local firstgid = tilesets[i].firstgid
 
-      for _, t in pairs( tilesets[i].tiles ) do
-        local n = t.id+firstgid
+      for _, tile in pairs( tilesets[i].tiles ) do
+        local n = tile.id+firstgid
         _tileData[n] = {}
 
-        if t.properties then
-          for j = 1, #t.properties do
-            local t = t.properties[j]
+        if tile.properties then
+          for j = 1, #tile.properties do
+            local t = tile.properties[j]
             _tileData[n][t.name] = t.value
           end
         end
@@ -399,12 +399,12 @@ function M.new(data, dir)
 
             -- Assign any properties set in Tiled to the actual tile object.
             local strippedGid = clearbit(clearbit(clearbit(tileNumber, FlippedHorizontallyFlag), FlippedVerticallyFlag), FlippedDiagonallyFlag)
-            local data = _tileData[strippedGid]
-            if type( data ) == "table" then
+            local tileProps = _tileData[strippedGid]
+            if type( tileProps ) == "table" then
               local physicsData = {}
 
               -- Separate physics properties from everything else.
-              for k, v in pairs( data ) do
+              for k, v in pairs( tileProps ) do
                 if physicsProperties[k] then
                   physicsData[k] = v
                 else
@@ -733,11 +733,11 @@ function M.new(data, dir)
 
   function map:centerAnchor()
     for layer = 1, self.numChildren do
-      for object = 1, map[layer].numChildren do
-        map[layer][object]:translate(-width/2, -height/2)
+      for object = 1, self[layer].numChildren do
+        self[layer][object]:translate(-width/2, -height/2)
       end
     end
-    map.anchorX, map.anchorY = 0.5, 0.5
+    self.anchorX, self.anchorY = 0.5, 0.5
   end
 
   -- Make sure map stays on screen
@@ -798,7 +798,7 @@ function M.new(data, dir)
 
   function map:sortLayer(layer, reverse)
     local objects = {}
-    local layerToSort = map:findLayer(layer) or {}
+    local layerToSort = self:findLayer(layer) or {}
     if layerToSort.numChildren then
       for i = 1, layerToSort.numChildren do
         objects[#objects+1] = layerToSort[i]
@@ -873,8 +873,12 @@ function M.new(data, dir)
     if type(data.backgroundcolor) == "string" then
       display.setDefault("background", decodeTiledColor("FF" .. data.backgroundcolor))
     elseif type(data.backgroundcolor) == "table" then
-      for i = 1, #data.backgroundcolor do data.backgroundcolor[i] = data.backgroundcolor[i] / 255 end
-      display.setDefault("background", unpack(data.backgroundcolor))
+      -- Convert to 0-1 range without mutating the original data table.
+      local colors = {}
+      for i = 1, #data.backgroundcolor do
+        colors[i] = data.backgroundcolor[i] / 255
+      end
+      display.setDefault("background", unpack(colors))
     end
   end
 
