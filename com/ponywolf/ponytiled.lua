@@ -89,7 +89,6 @@ local function unpackPoints(points, dx, dy)
   return t
 end
 
-local centerX, centerY = display.contentCenterX, display.contentCenterY
 
 function M.new(data, dir)
   local map = display.newGroup()
@@ -701,7 +700,7 @@ function M.new(data, dir)
     -- find the difference between the hero and the display center
     -- and move the world to compensate
     local objx, objy = obj:localToContent(0,0)
-    objx, objy = centerX - objx , centerY - objy
+    objx, objy = display.contentCenterX - objx, display.contentCenterY - objy
     if tween then
       self.x, self.y = self.x + objx/4, self.y + objy/4
     else
