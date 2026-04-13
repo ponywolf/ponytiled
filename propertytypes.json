@@ -1,0 +1,204 @@
+[
+    {
+        "id": 1,
+        "name": "physics",
+        "type": "class",
+        "color": "#ff4db8ff",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "bodyType", "type": "string", "value": "dynamic" },
+            { "name": "density", "type": "float", "value": 1.0 },
+            { "name": "friction", "type": "float", "value": 0.3 },
+            { "name": "bounce", "type": "float", "value": 0.2 },
+            { "name": "isSensor", "type": "bool", "value": false },
+            { "name": "radius", "type": "float", "value": 0.0 },
+            { "name": "isFixedRotation", "type": "bool", "value": false },
+            { "name": "gravityScale", "type": "float", "value": 1.0 },
+            { "name": "isBox", "type": "bool", "value": false },
+            { "name": "boxWidth", "type": "float", "value": 1.0 },
+            { "name": "boxHeight", "type": "float", "value": 1.0 },
+            { "name": "boxX", "type": "float", "value": 0.0 },
+            { "name": "boxY", "type": "float", "value": 0.0 },
+            { "name": "boxAngle", "type": "float", "value": 0.0 }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "button",
+        "type": "class",
+        "color": "#ffffd700",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "text", "type": "string", "value": "" },
+            { "name": "defaultText", "type": "string", "value": "" },
+            { "name": "toggleText", "type": "string", "value": "" },
+            { "name": "toggleImage", "type": "object", "value": 0 },
+            { "name": "tag", "type": "string", "value": "" },
+            { "name": "noFollow", "type": "bool", "value": false }
+        ]
+    },
+    {
+        "id": 3,
+        "name": "decor",
+        "type": "class",
+        "color": "#ffff69b4",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "decorType", "type": "string", "value": "bounce" },
+            { "name": "intensity", "type": "float", "value": 0.5 },
+            { "name": "time", "type": "int", "value": 1000 },
+            { "name": "rnd", "type": "bool", "value": false }
+        ]
+    },
+    {
+        "id": 4,
+        "name": "dragable",
+        "type": "class",
+        "color": "#ff32cd32",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": []
+    },
+    {
+        "id": 5,
+        "name": "joint",
+        "type": "class",
+        "color": "#ff8a2be2",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "jointType", "type": "string", "value": "distance" },
+            { "name": "bodyA", "type": "object", "value": 0 },
+            { "name": "bodyB", "type": "object", "value": 0 },
+            { "name": "dampingRatio", "type": "float", "value": 0.0 },
+            { "name": "frequency", "type": "float", "value": 0.0 }
+        ]
+    },
+    {
+        "id": 6,
+        "name": "label",
+        "type": "class",
+        "color": "#ffd3d3d3",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "text", "type": "string", "value": " " },
+            { "name": "font", "type": "string", "value": "" },
+            { "name": "size", "type": "int", "value": 20 },
+            { "name": "color", "type": "color", "value": "#ffffffff" },
+            { "name": "align", "type": "string", "value": "center" },
+            { "name": "stroked", "type": "bool", "value": false },
+            { "name": "strokeColor", "type": "color", "value": "#ff000000" },
+            { "name": "labelStrokeWidth", "type": "float", "value": 1.0 },
+            { "name": "autoResize", "type": "bool", "value": false },
+            { "name": "keepInstance", "type": "bool", "value": false }
+        ]
+    },
+    {
+        "id": 7,
+        "name": "nineSlice",
+        "type": "class",
+        "color": "#ffffa500",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "filename", "type": "file", "value": "" },
+            { "name": "textureWidth", "type": "int", "value": 256 },
+            { "name": "textureHeight", "type": "int", "value": 256 },
+            { "name": "border", "type": "int", "value": 32 },
+            { "name": "top", "type": "int", "value": 32 },
+            { "name": "left", "type": "int", "value": 32 },
+            { "name": "right", "type": "int", "value": 32 },
+            { "name": "bottom", "type": "int", "value": 32 }
+        ]
+    },
+    {
+        "id": 8,
+        "name": "particle",
+        "type": "class",
+        "color": "#ffff4500",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "filename", "type": "file", "value": "" }
+        ]
+    },
+    {
+        "id": 9,
+        "name": "slideable",
+        "type": "class",
+        "color": "#ff4682b4",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "slideX", "type": "bool", "value": true },
+            { "name": "slideY", "type": "bool", "value": true },
+            { "name": "items", "type": "int", "value": 1 },
+            { "name": "offset", "type": "float", "value": 0.0 }
+        ]
+    },
+    {
+        "id": 10,
+        "name": "slider",
+        "type": "class",
+        "color": "#ffa52a2a",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": []
+    },
+    {
+        "id": 11,
+        "name": "swipeable",
+        "type": "class",
+        "color": "#ffda70d6",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": []
+    },
+    {
+        "id": 12,
+        "name": "textBox",
+        "type": "class",
+        "color": "#ffb0c4de",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "text", "type": "string", "value": " " },
+            { "name": "font", "type": "string", "value": "" },
+            { "name": "size", "type": "int", "value": 20 },
+            { "name": "align", "type": "string", "value": "center" },
+            { "name": "valign", "type": "string", "value": "center" },
+            { "name": "color", "type": "color", "value": "#ffffffff" },
+            { "name": "spacing", "type": "float", "value": 2.0 },
+            { "name": "lineHeight", "type": "float", "value": 16.0 },
+            { "name": "caps", "type": "bool", "value": false }
+        ]
+    },
+    {
+        "id": 13,
+        "name": "thumb",
+        "type": "class",
+        "color": "#ffdda0dd",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "slider", "type": "object", "value": 0 }
+        ]
+    },
+    {
+        "id": 14,
+        "name": "weather",
+        "type": "class",
+        "color": "#ff778899",
+        "drawFill": true,
+        "useAs": ["property", "object", "tile"],
+        "members": [
+            { "name": "xScroll", "type": "float", "value": 0.0 },
+            { "name": "yScroll", "type": "float", "value": 0.0 },
+            { "name": "angularMomentum", "type": "float", "value": 0.0 }
+        ]
+    }
+]

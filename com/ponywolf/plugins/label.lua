@@ -11,7 +11,7 @@ local function decodeTiledColor(hex)
     part = part == "" and "00" or part
     return tonumber("0x".. (part or "00")) / 255
   end
-  local a, r, g, b =  hexToFloat(hex:sub(1,2)), hexToFloat(hex:sub(3,4)), hexToFloat(hex:sub(5,6)), hexToFloat(hex:sub(7,8)) 
+  local a, r, g, b =  hexToFloat(hex:sub(1,2)), hexToFloat(hex:sub(3,4)), hexToFloat(hex:sub(5,6)), hexToFloat(hex:sub(7,8))
   return r, g, b, a
 end
 
@@ -23,10 +23,10 @@ local function decodeStrokeColor(hex)
     part = part == "" and "00" or part
     return tonumber("0x".. (part or "00")) / 255
   end
-  local a, r, g, b =  hexToFloat(hex:sub(1,2)), hexToFloat(hex:sub(3,4)), hexToFloat(hex:sub(5,6)), hexToFloat(hex:sub(7,8)) 
+  local a, r, g, b =  hexToFloat(hex:sub(1,2)), hexToFloat(hex:sub(3,4)), hexToFloat(hex:sub(5,6)), hexToFloat(hex:sub(7,8))
   local color = {
-    highlight = { r=r, g=g, b=b },
-    shadow =  { r=r, g=g, b=b },
+    highlight = { r=r, g=g, b=b, a=a },
+    shadow =  { r=r, g=g, b=b, a=a },
   }
   return color
 end
@@ -42,7 +42,7 @@ local function strokedText(options)
   options.x = 0
   options.y = 0
 
-  -- new options 
+  -- new options
   local color = options.color or "#FFFFFFFF"
   local strokeColor = options.strokeColor or "#FF888888"
   local strokeWidth = options.strokeWidth or 0.5
@@ -76,6 +76,21 @@ local function strokedText(options)
     for i=1, stroked.numChildren do
       stroked[i].text = text
     end
+
+    if self.designedHeight then
+      local newSize = self.fontSize
+      repeat
+        self:resize(newSize)
+        newSize = newSize - 0.25
+      until self.height <= self.designedHeight or newSize <=8
+    end
+  end
+
+  function stroked:resize(size)
+    self.size = size
+    for i=1, stroked.numChildren do
+      stroked[i].size = size
+    end
   end
 
   function stroked:setTextColor(...)
@@ -88,7 +103,7 @@ local function strokedText(options)
 end
 
 function M.new(instance)
-  if not instance then error("ERROR: Expected display object") end  
+  if not instance then error("ERROR: Expected display object") end
 
   -- remember inital object
   local tiledObj = instance
@@ -105,23 +120,39 @@ function M.new(instance)
   local params = { parent = tiledObj.parent,
     x = tiledObj.x, y = tiledObj.y, strokeColor = strokeColor, color = color,
     text = text, font = font, fontSize = size, strokeWidth = tiledObj.labelStrokeWidth or 1,
-    align = align, width = tiledObj.width } 
+    align = align, width = tiledObj.width }
 
   if stroked then
     instance = strokedText(params)
-    instance:update(text) 
   else
     instance = display.newText(params)
-    function instance:update(text) instance.text = text end
+    function instance:resize(size) self.size = size end
+    function instance:update(text)
+      self.text = text
+      --print("LABEL", text)
+      if self.designedHeight then
+        local newSize = self.fontSize
+        repeat
+          --print("RESIZE", text, newSize)
+          self:resize(newSize)
+          newSize = newSize - 0.5
+        until self.height < self.designedHeight or newSize < 8
+      end
+    end
     instance:setTextColor(decodeTiledColor(color))
   end
-  
 
 -- push the rest of the properties
-  instance.rotation = tiledObj.rotation 
-  instance.name = tiledObj.name 
+  instance.rotation = tiledObj.rotation
+  instance.name = tiledObj.name
   instance.type = tiledObj.type
-  instance.alpha = tiledObj.alpha 
+  instance.alpha = tiledObj.alpha
+
+  if tiledObj.autoResize then
+    instance.designedHeight = tiledObj.contentHeight
+    instance.fontSize = size
+  end
+  instance:update(text)
 
   if not tiledObj.keepInstance then
     display.remove(tiledObj)
