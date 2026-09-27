@@ -17,9 +17,13 @@ local function normalizePath( p )
   local parts = {}
   for part in p:gmatch( "[^/\\]+" ) do
     if part == ".." then
-      if #parts > 0 then
+      -- Keep a ".." that climbs above the base directory so the load fails visibly instead of hitting a different file.
+      if #parts > 0 and parts[#parts] ~= ".." then
         parts[#parts] = nil
+      else
+        parts[#parts + 1] = part
       end
+
     elseif part ~= "." then
       parts[#parts + 1] = part
     end
@@ -273,7 +277,7 @@ function M.new(data, dir)
       if tileset.source then
         -- Resolve image paths relative to the TSX file's directory, not the map's.
         local tsxDir = tileset.source:match( "(.*/)") or ""
-        local externalSet = xml:loadFile( dir .. tileset.source )
+        local externalSet = xml:loadFile( normalizePath( dir .. tileset.source ) )
         tileset.tileheight = externalSet.properties.tileheight
         tileset.tilewidth = externalSet.properties.tilewidth
         tileset.columns = externalSet.properties.columns

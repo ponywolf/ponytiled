@@ -39,7 +39,7 @@ local map = tiled.new(mapData)
 
 #### dir
 
-Most of the time you will store you maps and images/tilesets in a directory. The dir parameter overrides where **ponytiled** looks for images.
+Most of the time you will store you maps and images/tilesets in a directory. The dir parameter overrides where **ponytiled** looks for images. Pass the directory the map file was saved in: Tiled stores image and tileset paths relative to the map, and **ponytiled** resolves `../` segments, so a map in `maps/` can use tilesets and images from `assets/images/`. External TSX images resolve relative to the TSX file. All files must be inside the project's resource directory.
 
 ```
 local mapData = require "maps.objects.sandbox" -- load from lua export
