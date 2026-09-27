@@ -1519,8 +1519,8 @@
                  "type":"hero",
                  "visible":true,
                  "width":128,
-                 "x":45,
-                 "y":979.5
+                 "x":1073,
+                 "y":859.5
                 }, 
                 {
                  "gid":44,
@@ -1674,21 +1674,29 @@
                  "y":997
                 }, 
                 {
-                 "height":19,
+                 "height":47.5,
                  "id":203,
-                 "name":"",
+                 "name":"text",
+                 "properties":[
+                        {
+                         "name":"TTF",
+                         "type":"file",
+                         "value":"..\/..\/fonts\/Roboto-Regular.ttf"
+                        }],
                  "rotation":0,
                  "text":
                     {
-                     "fontfamily":"Terminal",
+                     "color":"#ff1100",
+                     "fontfamily":"Roboto",
+                     "pixelsize":24,
                      "text":"Hello World",
                      "wrap":true
                     },
                  "type":"",
                  "visible":true,
-                 "width":142,
-                 "x":48.5,
-                 "y":751.5
+                 "width":139.5,
+                 "x":1171.5,
+                 "y":689.333333333333
                 }],
          "opacity":1,
          "type":"objectgroup",
