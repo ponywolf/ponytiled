@@ -17,9 +17,13 @@ local function normalizePath( p )
   local parts = {}
   for part in p:gmatch( "[^/\\]+" ) do
     if part == ".." then
-      if #parts > 0 then
+      -- Keep a ".." that climbs above the base directory so the load fails visibly instead of hitting a different file.
+      if #parts > 0 and parts[#parts] ~= ".." then
         parts[#parts] = nil
+      else
+        parts[#parts + 1] = part
       end
+
     elseif part ~= "." then
       parts[#parts + 1] = part
     end
@@ -273,7 +277,7 @@ function M.new(data, dir)
       if tileset.source then
         -- Resolve image paths relative to the TSX file's directory, not the map's.
         local tsxDir = tileset.source:match( "(.*/)") or ""
-        local externalSet = xml:loadFile( dir .. tileset.source )
+        local externalSet = xml:loadFile( normalizePath( dir .. tileset.source ) )
         tileset.tileheight = externalSet.properties.tileheight
         tileset.tilewidth = externalSet.properties.tilewidth
         tileset.columns = externalSet.properties.columns
@@ -327,7 +331,7 @@ function M.new(data, dir)
             for t = 1, #tileset.tiles do
               local tile = tileset.tiles[t]
               tile.properties = tiledProperties(tile.properties or {})
-              if tile.animation and tile.id == (gid - firstgid + (data.luaversion and 1 or 0)) then
+              if tile.animation and tile.id == gid - firstgid then
                 sequenceData = {
                   name="imported",
                   frames= {},
@@ -346,7 +350,7 @@ function M.new(data, dir)
         else -- collection of images
           if not tileset.tiles[1] then
             for k,v in pairs(tileset.tiles) do
-              if tonumber(k) == (gid - firstgid + (data.luaversion and 1 or 0)) then
+              if tonumber(k) == gid - firstgid then
                 return v.image, flip -- may need updating with documents directory
               end
             end
@@ -354,7 +358,7 @@ function M.new(data, dir)
           -- newer tiled format is found here
           for t = 1, #tileset.tiles do
             local tile = tileset.tiles[t]
-            if tonumber(tile.id) == gid - firstgid  + (data.luaversion and 1 or 0) then
+            if tonumber(tile.id) == gid - firstgid then
               return tile.image, flip -- may need updating with documents directory
             end
           end
@@ -570,10 +574,19 @@ function M.new(data, dir)
         elseif object.text then
           -- TTF font loading
           local font = object.properties.TTF and normalizePath( dir .. object.properties.TTF )
-          local size = object.text.pixelsize
-          local color = object.text.color
-          local text = display.newText(objectGroup, object.text.text or " ", object.x, object.y, font or native.systemFont, size)
-          text:setFillColor(decodeTiledColor(color or "FFFFFF"))
+
+          -- JSON nests text settings in a table; Lua exports them flat on the object with the string in object.text.
+          local textData = type( object.text ) == "table" and object.text or object
+          local size = textData.pixelsize
+          local color = textData.color
+          local text = display.newText(objectGroup, textData.text or " ", object.x, object.y, font or native.systemFont, size)
+
+          if type( color ) == "table" then
+            text:setFillColor( color[1] / 255, color[2] / 255, color[3] / 255, (color[4] or 255) / 255 )
+          else
+            text:setFillColor(decodeTiledColor(color or "FFFFFF"))
+          end
+
           text.anchorX, text.anchorY = 0.0, 0.0
           text.rotation = object.rotation
           text.isVisible = object.visible

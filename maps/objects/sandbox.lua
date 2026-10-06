@@ -8,7 +8,7 @@ return {
   height = 45,
   tilewidth = 32,
   tileheight = 32,
-  nextobjectid = 203,
+  nextobjectid = 204,
   backgroundcolor = { 39, 185, 154 },
   properties = {},
   tilesets = {
@@ -1974,8 +1974,8 @@ return {
           name = "hero",
           type = "hero",
           shape = "rectangle",
-          x = 45,
-          y = 979.5,
+          x = 1073,
+          y = 859.5,
           width = 128,
           height = 160,
           rotation = 0,
@@ -2128,6 +2128,26 @@ return {
           gid = 19,
           visible = true,
           properties = {}
+        },
+        {
+          id = 203,
+          name = "text",
+          type = "",
+          shape = "text",
+          x = 1171.5,
+          y = 689.333333333333,
+          width = 139.5,
+          height = 47.5,
+          rotation = 0,
+          visible = true,
+          text = "Hello World",
+          fontfamily = "Roboto",
+          pixelsize = 24,
+          wrap = true,
+          color = { 255, 17, 0 },
+          properties = {
+            ["TTF"] = "../../fonts/Roboto-Regular.ttf"
+          }
         }
       }
     },
